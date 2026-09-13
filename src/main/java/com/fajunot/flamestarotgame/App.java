@@ -25,7 +25,7 @@ Notes ni Willie
 
 3. NODE
     - things inside the scene.
-    - ex. Text, Label, Button, ImageView, Rectangle, Circle, Pane
+    - ex. Text, TextField, Label, Button, ImageView, Rectangle, Circle, Pane
 
 The base scene graph:
 Stage -> Scene -> StackPane -> Label
@@ -46,16 +46,31 @@ stage.setTitle("<Title>");
     - makes the title of the window
 
 var - automatic variable identification unlike C.
+ImageView - might be used later
+Rectangle - Maybe for bars
+Button - Menu 
 
+EVENT LISTENERS:
+clickMe.setOnAction( event -> {
+    System.out.println("YOU CLICKED ME!");
+});
 */
 
 package com.fajunot.flamestarotgame;
 
 import javafx.application.Application;
+
+import javafx.stage.Stage;
+
+//Scene Imports
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+
 
 
 /**
@@ -64,23 +79,17 @@ import javafx.stage.Stage;
 public class App extends Application {
 
     @Override
-    public void start(Stage stage){
-        Label label = new Label("FLAMES TAROT!");
-        Scene scene = new Scene(new StackPane(label), 640, 480);
+    public void start(Stage stage) {
+        var title = new Label ("Flames Tarot");
+        var root = new StackPane();
+        root.getChildren().add(title);
+        
+        var scene = new Scene(root, 1280, 720);
         stage.setScene(scene);
-        stage.setTitle("FLAMES Tarot");
+        stage.setTitle(title.getText());
         stage.show();
-
     }
     
-    public void next (Stage stage){
-        var label = new Label("HEEEEEEEE");
-        var scene = new Scene (new StackPane(label), 300, 300);
-        
-        stage.setScene(scene);
-        stage.show();
-    }
-
     public static void main(String[] args) {
         launch();
     }
