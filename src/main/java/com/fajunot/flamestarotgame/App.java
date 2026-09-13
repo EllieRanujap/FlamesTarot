@@ -77,16 +77,28 @@ import javafx.scene.layout.VBox;
  * JavaFX App
  */
 public class App extends Application {
-
+    //Instance variable
+    private Stage stage;
+    private Scene scene;
+    
     @Override
     public void start(Stage stage) {
-        var title = new Label ("Flames Tarot");
-        var root = new StackPane();
+        this.stage = stage;
+        stage.setTitle("Flames Tarot Game");
+        scene = new Scene(new Pane(), 1280, 720); // the new pane is just temporary
+        
+        mainMenu();
+    }
+    
+    //Screens
+    public void mainMenu (){
+        var root = new VBox();
+        var title = new Label("Welcome to Flames Tarot!");
+        
         root.getChildren().add(title);
         
-        var scene = new Scene(root, 1280, 720);
+        scene.setRoot(root);
         stage.setScene(scene);
-        stage.setTitle(title.getText());
         stage.show();
     }
     
