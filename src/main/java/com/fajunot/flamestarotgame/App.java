@@ -71,8 +71,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-
-
 /**
  * JavaFX App
  */
@@ -81,6 +79,7 @@ public class App extends Application {
     private Stage stage;
     private Scene scene;
     
+    //Start =======================================================================
     @Override
     public void start(Stage stage) {
         this.stage = stage;
@@ -90,20 +89,44 @@ public class App extends Application {
         mainMenu();
     }
     
-    //Screens
+    //Screens ======================================================================
     public void mainMenu (){
+        //Initialization
         var root = new VBox();
         var title = new Label("Welcome to Flames Tarot!");
+        var btn_play = new Button("PLAY!");
         
+        //Building
         root.getChildren().add(title);
+        root.getChildren().add(btn_play);
         
+        //Setup
+        setupScreen(root);
+        
+        btn_play.setOnAction(click -> { //I just found out u can name this whatever u want
+            askName();
+        });
+    }
+    
+    public static void askName(){
+        System.out.println("WHAT IS UR NAMEEE");
+    }
+    
+    
+    //MAIN ===============================================================================================
+    public static void main(String[] args) {
+        launch();
+    }
+    
+    //SUPPORT FUNCTIONS
+    public void setupScreen(VBox root){ //Make overloaded functions if not VBox
         scene.setRoot(root);
         stage.setScene(scene);
         stage.show();
     }
     
-    public static void main(String[] args) {
-        launch();
-    }
+    
+    //CALCULATING FUNCTIONS ===================================================================================
+    
 
 }
