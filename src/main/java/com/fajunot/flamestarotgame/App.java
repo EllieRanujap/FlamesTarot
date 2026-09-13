@@ -78,6 +78,7 @@ public class App extends Application {
     //Instance variable
     private Stage stage;
     private Scene scene;
+    private String name1, name2;
     
     //Start =======================================================================
     @Override
@@ -85,6 +86,7 @@ public class App extends Application {
         this.stage = stage;
         stage.setTitle("Flames Tarot Game");
         scene = new Scene(new Pane(), 1280, 720); // the new pane is just temporary
+        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm()); //access stylesheet
         
         mainMenu();
     }
@@ -103,13 +105,85 @@ public class App extends Application {
         //Setup
         setupScreen(root);
         
+        //Button
         btn_play.setOnAction(click -> { //I just found out u can name this whatever u want
-            askName();
+            askFirstName();
         });
     }
     
-    public static void askName(){
-        System.out.println("WHAT IS UR NAMEEE");
+    public void askFirstName(){
+        //Initialization
+        var root = new VBox();
+        var txt_1 = new Label("Let's start with your name.");
+        var txt_err = new Label("");
+        var fld_name = new TextField();
+        var btn_enter = new Button("ENTER");
+        
+        //Building
+        root.getChildren().add(txt_1);
+        root.getChildren().add(fld_name);
+        root.getChildren().add(btn_enter);
+        root.getChildren().add(txt_err);
+        
+        //Setup
+        setupScreen(root);
+        
+        //Button
+        btn_enter.setOnAction(click -> { 
+            String name = fld_name.getText().trim();
+            
+            //ERROR TRAPPING --Make this into a function in the future
+            if (name.equals("")){
+                txt_err.setText("Please input your name, darling.");
+                return;
+            }
+            
+            if (name.length() > 50){
+                txt_err.setText("Sorry dear, I have a 50 character limit.");
+                return;
+            }
+            
+            this.name1 = name;
+            askSecondName();
+        });
+    }
+    
+    public void askSecondName(){
+        //Initialization
+        var root = new VBox();
+        var txt_1 = new Label("Alright, " + this.name1 + ". Who is the person you can't stop thinking about?");
+        var txt_err = new Label("");
+        var fld_name = new TextField();
+        var btn_enter = new Button("ENTER");
+        
+        //Building
+        root.getChildren().add(txt_1);
+        root.getChildren().add(fld_name);
+        root.getChildren().add(btn_enter);
+        root.getChildren().add(txt_err);
+        
+        //Setup
+        setupScreen(root);
+        
+        //Button
+        btn_enter.setOnAction(click -> { 
+            String name = fld_name.getText().trim();
+            
+            //ERROR TRAPPING
+            if (name.equals("")){
+                txt_err.setText("Please type their name properly...");
+                return;
+            }
+            
+            if (name.length() > 50){
+                txt_err.setText("Sorry dear, I have a 50 character limit.");
+                return;
+            }
+            
+            this.name2 = name;
+            txt_err.setText(this.name1 + " and " + this.name2 + "... What kind of a pair will this turn out to be?");
+            
+        });
     }
     
     
@@ -125,8 +199,9 @@ public class App extends Application {
         stage.show();
     }
     
-    
     //CALCULATING FUNCTIONS ===================================================================================
     
+    
+    //AESTHETIC FUNCTIONS =====================================================================================
 
 }

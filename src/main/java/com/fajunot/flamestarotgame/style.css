@@ -1,0 +1,32 @@
+/*
+Date Created: September 13, 2026
+Summary: This is the style sheet of the project.
+*/
+
+.root {
+    -fx-background-color: #9985ca;
+}
+
+.label {
+    -fx-font-size: 24px;
+}
+
+.button {
+    -fx-font-size: 16px;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: black;
+}
+
+.text-field {
+    -fx-font-size: 16px;
+}
+
+/*
+Notes:
+For classes with more than one word, the class naming convention is probably:
+.<first>-<second> {
+    ...
+}
+
+*/
+

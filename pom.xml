@@ -74,5 +74,22 @@
                 </executions>
             </plugin>
         </plugins>
+        
+        <!--I ADDED THIS NEW-->
+        <resources>
+            <!-- Standard resources folder rule -->
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <!-- Crucial Fix: Tells Maven to include CSS/FX files from your java folders -->
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.css</include>
+                    <include>**/*.fxml</include>
+                    <include>**/*.png</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 </project>
