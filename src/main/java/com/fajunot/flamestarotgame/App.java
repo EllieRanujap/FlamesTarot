@@ -40,6 +40,14 @@ public class App extends Application {
     private Scene scene;
     private String name1, name2;
     
+    //Messages
+    private final String err_1;
+    private final String err_2;
+
+    public App() {
+        this.err_1 = "Please input your name, darling.";
+        this.err_2 = "Sorry dear, I have a 50 character limit.";
+    }
     
     //Start =======================================================================
     @Override
@@ -91,46 +99,52 @@ public class App extends Application {
         //Initialization
         String msg_1 = "Let's start with your name.";
         
-        String err_1 = "Please input your name, darling.";
+        
         
         var root = new VBox();
-        Label txt_1 = new Label(), txt_2 = new Label();
-        var txt_err = new Label("");
+        Label txt_1 = new Label();
         var fld_name = new TextField();
         var btn_enter = new Button("ENTER");
         
         Timeline anim_txt_1;
-        Timeline anim_err_1;
         
         anim_txt_1 = textScrollAnim (msg_1, txt_1, 25);
         anim_txt_1.playFromStart();
+        
+        //anim_txt_1 = textScrollAnim (err_2, txt_1, 25);
         
         //Building
         root.getChildren().add(txt_1);
         root.getChildren().add(fld_name);
         root.getChildren().add(btn_enter);
-        root.getChildren().add(txt_err);
         
         //Setup
         setupScreen(root);
         
         //Button
-        btn_enter.setOnAction(click -> { 
-            String name = fld_name.getText().trim();
+        btn_enter.setOnAction( click -> { 
+            onPressEnter(fld_name, anim_txt_1, err_1, txt_1);
+        });
+    }
+    
+    public void onPressEnter(TextField fld_name, Timeline anim_txt_1, String err_1, Label txt_1){
+        String name = fld_name.getText().trim();
             
             //ERROR TRAPPING --Make this into a function in the future
             if (name.equals("")){
+                anim_txt_1 = textScrollAnim (err_1, txt_1, 25);
+                anim_txt_1.playFromStart();
                 return;
             }
             
             if (name.length() > 50){
-                txt_err.setText("Sorry dear, I have a 50 character limit.");
+                anim_txt_1 = textScrollAnim (err_1, txt_1, 25);
+                anim_txt_1.playFromStart();
                 return;
             }
             
             this.name1 = name;
             askSecondName();
-        });
     }
     
     public void askSecondName(){
@@ -179,14 +193,14 @@ public class App extends Application {
         score2 = getSimScore(this.name2, this.name1);
         sum = score1 + score2;
         
-        switch (sum % "FLAMES".length()){
-            case 1: relation = "FRIENDS"; break;
-            case 2: relation = "LOVERS"; break;
-            case 3: relation = "ACQUAINTANCE"; break;
-            case 4: relation = "MARRIED"; break;
-            case 5: relation = "ENEMIES"; break;
-            default: relation = "SOULMATE"; break;
-        }
+        relation = switch (sum % "FLAMES".length()) {
+            case 1 -> "FRIENDS";
+            case 2 -> "LOVERS";
+            case 3 -> "ACQUAINTANCE";
+            case 4 -> "MARRIED";
+            case 5 -> "ENEMIES";
+            default -> "SOULMATE";
+        };
         
         //Elements
         var root = new VBox();
