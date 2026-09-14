@@ -23,6 +23,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;     //image
+import javafx.scene.image.ImageView; //frame
 
 
 /**
@@ -41,7 +43,9 @@ public class App extends Application {
         this.stage = stage;
         stage.setTitle("Flames Tarot Game");
         scene = new Scene(new Pane(), 1280, 720); // the new pane is just temporary
-        scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm()); //access stylesheet
+        scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
+        
+        
         
         mainMenu();
     }
@@ -49,13 +53,23 @@ public class App extends Application {
     //Screens ======================================================================
     public void mainMenu (){
         //Initialization
-        var root = new VBox();
+        var root = new StackPane();
+        var scr_elements = new VBox();
         var title = new Label("Welcome to Flames Tarot!");
         var btn_play = new Button("PLAY!");
         
-        //Building
-        root.getChildren().add(title);
-        root.getChildren().add(btn_play);
+        //Pic ni Trix
+        Image bgPic = new Image( getClass().getResource("/images/trixter.jpg").toExternalForm() );
+        ImageView img_bgPic = new ImageView( bgPic );
+        
+        //Building (Back to front)
+        root.getChildren().addAll(img_bgPic, scr_elements);
+        
+        scr_elements.getChildren().addAll(title, btn_play);
+        
+        //Image 
+        img_bgPic.fitWidthProperty().bind( this.scene.widthProperty() );
+        img_bgPic.fitHeightProperty().bind( this.scene.heightProperty() );
         
         //Setup
         setupScreen(root);
@@ -194,6 +208,12 @@ public class App extends Application {
         stage.show();
     }
     
+    public void setupScreen(StackPane root){
+        scene.setRoot(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+    
     //CALCULATING FUNCTIONS ===================================================================================
     public int getSimScore(String n1, String n2){
         int sim = 0;
@@ -211,5 +231,5 @@ public class App extends Application {
     }
     
     //AESTHETIC FUNCTIONS =====================================================================================
-
+    
 }
