@@ -41,7 +41,10 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
+        //Stage Sets
         stage.setTitle("Flames Tarot Game");
+        stage.setResizable(false);
+                
         scene = new Scene(new Pane(), 1280, 720); // the new pane is just temporary
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
