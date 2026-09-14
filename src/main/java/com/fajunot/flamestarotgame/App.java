@@ -26,6 +26,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.image.Image;     //image
 import javafx.scene.image.ImageView; //frame
 
+//Animation
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 /**
  * JavaFX App
@@ -85,8 +89,10 @@ public class App extends Application {
     
     public void askFirstName(){
         //Initialization
+        String msg_1 = "Let's start with your name.";
+        
         var root = new VBox();
-        var txt_1 = new Label("Let's start with your name.");
+        var txt_1 = new Label();
         var txt_err = new Label("");
         var fld_name = new TextField();
         var btn_enter = new Button("ENTER");
