@@ -91,26 +91,19 @@ public class App extends Application {
         //Initialization
         String msg_1 = "Let's start with your name.";
         
+        String err_1 = "Please input your name, darling.";
+        
         var root = new VBox();
-        var txt_1 = new Label();
+        Label txt_1 = new Label(), txt_2 = new Label();
         var txt_err = new Label("");
         var fld_name = new TextField();
         var btn_enter = new Button("ENTER");
         
-        Timeline anim_txt_1 = new Timeline();
+        Timeline anim_txt_1;
+        Timeline anim_err_1;
         
-        for (int i = 0; i < msg_1.length(); i++){
-            int index = i;
-            
-            KeyFrame keyFrame = new KeyFrame( Duration.millis(50 * i), event -> {
-                txt_1.setText(msg_1.substring(0, index + 1));
-            });
-            
-            anim_txt_1.getKeyFrames().add(keyFrame);
-        }
-        
-        anim_txt_1.play();
-       
+        anim_txt_1 = textScrollAnim (msg_1, txt_1, 25);
+        anim_txt_1.playFromStart();
         
         //Building
         root.getChildren().add(txt_1);
@@ -127,7 +120,6 @@ public class App extends Application {
             
             //ERROR TRAPPING --Make this into a function in the future
             if (name.equals("")){
-                txt_err.setText("Please input your name, darling.");
                 return;
             }
             
@@ -236,6 +228,22 @@ public class App extends Application {
         scene.setRoot(root);
         stage.setScene(scene);
         stage.show();
+    }
+    
+    public Timeline textScrollAnim(String msg, Label label, int spd){
+        Timeline tm = new Timeline();
+        
+        for (int i = 0; i < msg.length(); i++){
+            int index = i;
+            
+            KeyFrame keyFrame = new KeyFrame( Duration.millis(spd * i), event -> {
+                label.setText(msg.substring(0, index + 1));
+            });
+            
+            tm.getKeyFrames().add(keyFrame);
+        }
+        
+        return tm;
     }
     
     //CALCULATING FUNCTIONS ===================================================================================
