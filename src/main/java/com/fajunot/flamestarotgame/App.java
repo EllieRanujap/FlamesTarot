@@ -53,7 +53,7 @@ public class App extends Application {
     //Screens ======================================================================
     public void mainMenu (){
         //Initialization
-        var root = new Pane();
+        var root = new StackPane();
         var scr_elements = new VBox();
         var title = new Label("Welcome to Flames Tarot!");
         var btn_play = new Button("PLAY!");
@@ -62,14 +62,14 @@ public class App extends Application {
         Image bgPic = new Image( getClass().getResource("/images/trixter.jpg").toExternalForm() );
         ImageView img_bgPic = new ImageView( bgPic );
         
-        //Building
-        root.getChildren().add(scr_elements);
+        //Building (Back to front)
+        root.getChildren().addAll(img_bgPic, scr_elements);
         
-        scr_elements.getChildren().add(title);
-        scr_elements.getChildren().add(btn_play);
-        scr_elements.getChildren().add(img_bgPic);
+        scr_elements.getChildren().addAll(title, btn_play);
         
-        
+        //Image 
+        img_bgPic.fitWidthProperty().bind( this.scene.widthProperty() );
+        img_bgPic.fitHeightProperty().bind( this.scene.heightProperty() );
         
         //Setup
         setupScreen(root);
@@ -208,7 +208,7 @@ public class App extends Application {
         stage.show();
     }
     
-    public void setupScreen(Pane root){ //Make overloaded functions if not VBox
+    public void setupScreen(StackPane root){
         scene.setRoot(root);
         stage.setScene(scene);
         stage.show();
