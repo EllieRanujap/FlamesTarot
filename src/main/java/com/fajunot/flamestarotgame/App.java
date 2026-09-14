@@ -97,6 +97,21 @@ public class App extends Application {
         var fld_name = new TextField();
         var btn_enter = new Button("ENTER");
         
+        Timeline anim_txt_1 = new Timeline();
+        
+        for (int i = 0; i < msg_1.length(); i++){
+            int index = i;
+            
+            KeyFrame keyFrame = new KeyFrame( Duration.millis(50 * i), event -> {
+                txt_1.setText(msg_1.substring(0, index + 1));
+            });
+            
+            anim_txt_1.getKeyFrames().add(keyFrame);
+        }
+        
+        anim_txt_1.play();
+       
+        
         //Building
         root.getChildren().add(txt_1);
         root.getChildren().add(fld_name);
