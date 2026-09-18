@@ -1,32 +1,71 @@
 /*
 Date Created: September 13, 2026
-Summary: This is the style sheet of the project.
+Updated: September 17, 2026
+Summary: Animated Astrological & Magical Theme for FlamesTarotGame
 */
 
 .root {
-    -fx-background-color: #9985ca;
+    -fx-background-color: linear-gradient(to bottom, #0d0b1e, #1a1438, #2a1b4e);
+    -fx-font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+/* Header & Banner Styles */
+.gold-header {
+    -fx-font-size: 24px;
+    -fx-text-fill: #f3c623;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(243, 198, 35, 0.5), 12, 0, 0, 0);
 }
 
 .label {
-    -fx-font-size: 24px;
+    -fx-text-fill: #e8e0ff;
 }
 
-.button {
-    -fx-font-size: 16px;
-    -fx-background-color: #ffffff;
-    -fx-text-fill: black;
+/* Button Styling with Glow */
+.button, .mystic-button {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-color: linear-gradient(to bottom, #2e2157, #181136);
+    -fx-text-fill: #fcf9ee;
+    -fx-border-color: #d4af37;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+    -fx-padding: 10px 24px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(212, 175, 55, 0.3), 8, 0, 0, 2);
 }
 
+.button:hover, .mystic-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #d4af37, #b8860b);
+    -fx-text-fill: #0d0b1e;
+    -fx-effect: dropshadow(gaussian, rgba(243, 198, 35, 0.7), 16, 0.4, 0, 0);
+}
+
+/* Text Fields */
 .text-field {
     -fx-font-size: 16px;
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-text-fill: #e8e0ff;
+    -fx-prompt-text-fill: #8a7da8;
+    -fx-border-color: #5c4b8b;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px 14px;
 }
 
-/*
-Notes:
-For classes with more than one word, the class naming convention is probably:
-.<first>-<second> {
-    ...
+.text-field:focused {
+    -fx-border-color: #f3c623;
+    -fx-effect: dropshadow(gaussian, rgba(243, 198, 35, 0.5), 10, 0, 0, 0);
 }
 
-*/
-
+/* Card Back Design for Altar */
+.card-back {
+    -fx-background-color: linear-gradient(to bottom, #1d1233, #0a0612);
+    -fx-border-color: #d4af37;
+    -fx-border-width: 2px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-cursor: hand;
+}
