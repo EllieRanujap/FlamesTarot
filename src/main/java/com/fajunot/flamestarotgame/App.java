@@ -123,22 +123,22 @@ public class App extends Application {
         
         //Button
         btn_enter.setOnAction( click -> { 
-            onPressEnter(fld_name, anim_txt_1, err_1, txt_1);
+            onPressEnter(fld_name, anim_txt_1, txt_1);
         });
     }
     
-    public void onPressEnter(TextField fld_name, Timeline anim_txt_1, String err_1, Label txt_1){
+    public void onPressEnter(TextField fld_name, Timeline anim_txt_1, Label txt_1){
         String name = fld_name.getText().trim();
             
             //ERROR TRAPPING --Make this into a function in the future
             if (name.equals("")){
-                anim_txt_1 = textScrollAnim (err_1, txt_1, 25);
+                anim_txt_1 = textScrollAnim (this.err_1, txt_1, 25);
                 anim_txt_1.playFromStart();
                 return;
             }
             
             if (name.length() > 50){
-                anim_txt_1 = textScrollAnim (err_1, txt_1, 25);
+                anim_txt_1 = textScrollAnim (this.err_2, txt_1, 25);
                 anim_txt_1.playFromStart();
                 return;
             }
