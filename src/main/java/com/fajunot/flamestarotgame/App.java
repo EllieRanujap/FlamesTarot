@@ -11,8 +11,6 @@ Summary: Flames Tarot Game Strict Traditional FLAMES Algorithm & Dark Altar Reve
 
 package com.fajunot.flamestarotgame;
 
-import java.util.Random;
-
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -84,9 +82,7 @@ public class App extends Application {
         stage.show();
     }
 
-    /* ==========================================
-      MULTI-STRATEGY CLASSLOADER IMAGE LOADER
-    ===========================================*/
+    //Image loader
     private Image loadResourceImage(String baseName) {
         String[] names = {baseName + ".png", baseName + ".PNG", baseName + ".jpg", baseName + ".JPG"};
 
@@ -245,9 +241,7 @@ public class App extends Application {
         });
     }
 
-    // ==========================================
-    // SCREEN 1: MAIN MENU
-    // ==========================================
+    // Main menu screen
     public void mainMenu() {
         StackPane root = createScreenWithBackground("1stBG");
         
@@ -267,11 +261,10 @@ public class App extends Application {
         Label primerText = new Label();
         primerText.getStyleClass().add("primer-text");
         
-        //Make it animated ==============================================
+        //Animation
         Timeline anim_txt_1;
         anim_txt_1 = textScrollAnim (primerStr, primerText, 25);
         anim_txt_1.playFromStart();
-        //===================================================================
 
         Button btnBegin = new Button("READ YOUR FATE");
         btnBegin.getStyleClass().add("gold-button");
@@ -289,7 +282,7 @@ public class App extends Application {
             imgTrix.setImage(trixI);
         });
         
-        //Align all the things ==========================================
+        //Align all the things 
         primerText.setAlignment(Pos.CENTER);
         primerText.setMaxWidth(800);
         
@@ -329,9 +322,7 @@ public class App extends Application {
         btnBegin.setOnAction(click -> playFastTransition(this::soulConsentScreen));
     }
 
-    // ==========================================
-    // SCREEN 2: SOUL CONSENT
-    // ==========================================
+    // Consent screen
     public void soulConsentScreen() {
         StackPane root = createScreenWithBackground("3rdBG");
 
@@ -366,13 +357,7 @@ public class App extends Application {
         btnConsent.setOnAction(e -> playFastTransition(this::askNamesScreen));
     }
 
-    // ==========================================
-    // SCREEN 3: NAME INPUT FORM (DYNAMIC PROMPTS)
-    // ==========================================
-    /*
-    For different prompt each time
-    Just 3 strings, the title and the two "label" like in HTML
-    */
+    // Prompts for the other name
     private static class PromptSet {
         String title;
         String seekerLabel;
@@ -464,9 +449,7 @@ public class App extends Application {
         });
     }
 
-    // ==========================================
-    // SCREEN 4: 6-CARD BLANK DECK (ALTAR LAYOUT)
-    // ==========================================
+    // Layout cards
     public void tarotDeckScreen() {
         StackPane root = createScreenWithBackground("6thBG");
         ImageView imgHand = new ImageView(this.hand);
@@ -493,7 +476,7 @@ public class App extends Application {
         headerText.setAlignment(Pos.CENTER);
         headerText.setTranslateY(50);
 
-        // Card Container (Expanded bounds so transformed cards remain clickable)
+        // Card container
         Pane cardRoot = new Pane();
         cardRoot.setPrefSize(1000, 400);
         cardRoot.setMaxSize(1000, 400);
@@ -590,7 +573,7 @@ public class App extends Application {
         defaultGlow.setRadius(14);
 
         card.setEffect(defaultGlow);
-        card.setPickOnBounds(false); //Hitbox is the shape, not a set rectangle anymore
+        card.setPickOnBounds(false); 
 
         card.setOnMouseEntered(e -> {
 
@@ -612,9 +595,7 @@ public class App extends Application {
         return card;
     }
 
-    // ==========================================
-    // SCREEN 5: THE FINAL SPREAD (THE READING)
-    // ==========================================
+    // Final reading
     public void revealFate(int chosenCardIndex) {
         FlamesResult result = calculateFlames();
 
@@ -628,11 +609,9 @@ public class App extends Application {
         titleBanner.getStyleClass().add(result.isDark ? "dark-red-header-small" : "gold-header-small");
         applyPulseAnimation(titleBanner, 3200);
 
-        // Balanced side-by-side card container
-        // Balanced side-by-side card container (tightened spacing)
-        HBox altarGrid = new HBox(8); // Reduced from 24 to 8 to bring cards close together
+        HBox altarGrid = new HBox(8); 
         altarGrid.setAlignment(Pos.CENTER);
-        altarGrid.setMaxWidth(Region.USE_PREF_SIZE); // Prevents HBox from taking extra horizontal space
+        altarGrid.setMaxWidth(Region.USE_PREF_SIZE); 
 
         // Card 1: Chosen Tarot Card Image
         ImageView cardView1 = new ImageView();
@@ -712,10 +691,8 @@ public class App extends Application {
         btnRestart.setOnAction(click -> playFastTransition(this::mainMenu));
     }
 
-    // ==========================================
-    // FLAMES LOGIC & ALGORITHM (STRICT TRADITIONAL)
-    // ==========================================
-    private static class FlamesResult { //REMOVE MEEEEEEEEEEEEEEEEEE
+    // Flames logic
+    private static class FlamesResult { 
         String outcomeName;
         String imageFileName;
         int score;
