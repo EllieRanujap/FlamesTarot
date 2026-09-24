@@ -11,6 +11,8 @@ Summary: Flames Tarot Game Strict Traditional FLAMES Algorithm & Dark Altar Reve
 
 package com.fajunot.flamestarotgame;
 
+import java.util.Random;
+
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -750,7 +752,7 @@ public class App extends Application {
         score2 = getSimScore(this.name2, this.name1);
         sum = score1 + score2;
         
-        boolean isOdd = (sum % 2 != 0);
+        boolean isDark = random.nextBoolean();
 
         String outcomeTitle;
         String adviceText;
@@ -759,7 +761,7 @@ public class App extends Application {
         switch (sum % "FLAMES".length()) {
             case 1:
                 imageFileName = "friends";
-                if (isOdd) {
+                if (isDark) {
                     outcomeTitle = "Friends (Reversed) — The Shadow Pact";
                     adviceText = "Underneath a quiet alliance lies an unexpressed distance between " + this.name1 + " and " + this.name2 + ". Unspoken expectations linger, threatening to turn genuine friendship into silent resentment if boundaries are left unsaid.";
                 } else {
@@ -770,7 +772,7 @@ public class App extends Application {
 
             case 2:
                 imageFileName = "lovers";
-                if (isOdd) {
+                if (isDark) {
                     outcomeTitle = "The Lovers (Reversed) — The Lost Cause";
                     adviceText = "A volatile passion burns between " + this.name1 + " and " + this.name2 + ", consumed by obsessive longing and emotional tension. Unresolved fears mask true vulnerability, pulling both souls into an addictive cycle of attraction and ruin.";
                 } else {
@@ -781,7 +783,7 @@ public class App extends Application {
 
             case 3:
                 imageFileName = "acquaintances";
-                if (isOdd) {
+                if (isDark) {
                     outcomeTitle = "Affection (Reversed) — Unspoken Obsession";
                     adviceText = "Surface-level interactions conceal hidden intensity between " + this.name1 + " and " + this.name2 + ". The emotional tether remains unresolved, trapped between fascinated curiosity and fear of rejection.";
                 } else {
@@ -792,7 +794,7 @@ public class App extends Application {
 
             case 4:
                 imageFileName = "marriage";
-                if (isOdd) {
+                if (isDark) {
                     outcomeTitle = "Marriage (Reversed) — Bound in Golden Chains";
                     adviceText = "An inescapable covenant links " + this.name1 + " and " + this.name2 + ", but obligations threaten to overshadow organic affection. Friction arises as duty clashes with personal freedom.";
                 } else {
@@ -803,7 +805,7 @@ public class App extends Application {
 
             case 5:
                 imageFileName = "enemies";
-                if (isOdd) {
+                if (isDark) {
                     outcomeTitle = "Enemies (Reversed) — Eternal Nemesis";
                     adviceText = "A dark friction dominates the energetic field between " + this.name1 + " and " + this.name2 + ". Ego clashes and deep psychological pride provoke recurring conflict that requires strict boundaries to break.";
                 } else {
@@ -815,7 +817,7 @@ public class App extends Application {
             case 6:
             default:
                 imageFileName = "soulmates";
-                if (isOdd) {
+                if (isDark) {
                     outcomeTitle = "Soulmates (Reversed) — The Broken Mirror";
                     adviceText = "A spiritual mirror links " + this.name1 + " and " + this.name2 + ", reflecting both light and deepest insecurities. Until inner shadows are acknowledged, this intense connection will feel like a fated burden.";
                 } else {
@@ -825,7 +827,7 @@ public class App extends Application {
                 break;
         }
 
-        return new FlamesResult(outcomeTitle, imageFileName, sum, adviceText, isOdd);
+        return new FlamesResult(outcomeTitle, imageFileName, sum, adviceText, isDark);
     }
 
     public static void main(String[] args) {
