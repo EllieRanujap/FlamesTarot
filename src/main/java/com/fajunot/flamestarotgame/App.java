@@ -74,8 +74,8 @@ public class App extends Application {
         
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
-        //tarotDeckScreen();
-        introExpo();
+        tarotDeckScreen();
+        //introExpo();
         
         //Make the screen show up
         stage.setScene(scene);
@@ -531,7 +531,7 @@ public class App extends Application {
         
         headerText.setTranslateY(-225);
 
-        mainLayout.getChildren().addAll(cardRoot);
+        mainLayout.getChildren().add(cardRoot);
         root.getChildren().addAll(mainLayout, imgHand, headerText);
 
         fadeIn(mainLayout, 50);
