@@ -74,8 +74,8 @@ public class App extends Application {
         
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
-        tarotDeckScreen();
-        //introExpo();
+        //tarotDeckScreen();
+        introExpo();
         
         //Make the screen show up
         stage.setScene(scene);
@@ -467,60 +467,61 @@ public class App extends Application {
     // ==========================================
     public void tarotDeckScreen() {
         StackPane root = createScreenWithBackground("6thBG");
-        ImageView imgHand = new ImageView( this.hand );
-        //Hand anim
+        ImageView imgHand = new ImageView(this.hand);
+
+        // Hand animation
         TranslateTransition hand_anim = new TranslateTransition();
         hand_anim.setDuration(Duration.seconds(1.25));
         hand_anim.setNode(imgHand);
         hand_anim.setByY(-650);
         hand_anim.setInterpolator(Interpolator.EASE_OUT);
 
-        VBox mainLayout = new VBox(16);
-        mainLayout.setAlignment(Pos.CENTER);
-        mainLayout.setPadding(new Insets(20, 10, 10, 10));
+        VBox mainLayout = new VBox(20);
+        mainLayout.setAlignment(Pos.TOP_CENTER);
+        mainLayout.setPadding(new Insets(40, 10, 10, 10));
 
+        // Header Labels (Positioned naturally in layout stream)
         Label title = new Label("THE ALTAR OF DESTINY");
         title.getStyleClass().add("gold-header-medium");
 
         Label instruction = new Label("Select 1 of the 6 cards to unlock the fate between " + this.name1 + " & " + this.name2);
         instruction.getStyleClass().add("instruction-label");
 
-        VBox headerText = new VBox(4, title, instruction);
+        VBox headerText = new VBox(8, title, instruction);
         headerText.setAlignment(Pos.CENTER);
+        headerText.setTranslateY(50);
 
+        // Card Container (Expanded bounds so transformed cards remain clickable)
         Pane cardRoot = new Pane();
-        
-        cardRoot.setPrefSize(900, 300);
+        cardRoot.setPrefSize(1000, 400);
+        cardRoot.setMaxSize(1000, 400);
 
-        double centerX = 450;
-        double centerY = 150;
-
-        double spacing = 60;
+        double centerX = 325;
+        double centerY = 200;
+        double spacing = 70;
 
         for (int i = 0; i < 6; i++) {
             final int cardIndex = i;
 
             StackPane cardNode = createBlankCardNode(i + 1);
-
-            // Give the card a predictable size
             cardNode.setPrefSize(130, 195);
 
-            // Position each card horizontally
+            // Position cards centered inside cardRoot
             double x = centerX - ((5 * spacing) / 2) + (i * spacing);
-            double y = centerY;
+            double y = centerY - 50;
 
-            cardNode.setLayoutX(x + 15);
-            cardNode.setLayoutY(y - 150);
+            cardNode.setLayoutX(x);
+            cardNode.setLayoutY(y);
 
-            // Rotate around the bottom-center of the card
+            // Pivot rotation around bottom-center of card
             Rotate rot = new Rotate();
             rot.pivotXProperty().bind(cardNode.widthProperty().divide(2));
-            rot.pivotYProperty().bind(cardNode.heightProperty().add(200));
+            rot.pivotYProperty().bind(cardNode.heightProperty().add(150));
             rot.setAngle(-50 + (i * 20));
-            
+
             cardNode.getTransforms().add(rot);
 
-            // Click only this card
+            // Card Click Listener
             cardNode.setOnMouseClicked(e -> {
                 e.consume();
                 playFastTransition(() -> revealFate(cardIndex));
@@ -528,14 +529,12 @@ public class App extends Application {
 
             cardRoot.getChildren().add(cardNode);
         }
-        
-        headerText.setTranslateY(-225);
 
-        mainLayout.getChildren().add(cardRoot);
-        root.getChildren().addAll(mainLayout, imgHand, headerText);
+        // Stack layout elements in proper order without negative translation overlays
+        mainLayout.getChildren().addAll(headerText, cardRoot);
+        root.getChildren().addAll(imgHand, mainLayout);
 
         fadeIn(mainLayout, 50);
-        //play anim
         hand_anim.play();
         scene.setRoot(root);
     }
@@ -615,7 +614,7 @@ public class App extends Application {
     // SCREEN 5: THE FINAL SPREAD (THE READING)
     // ==========================================
     public void revealFate(int chosenCardIndex) {
-        FlamesResult result = calculateFlames(this.name1, this.name2);
+        FlamesResult result = calculateFlames();
 
         StackPane root = createScreenWithBackground(result.isDark ? "7thBG" : "4thBG");
 
@@ -676,7 +675,7 @@ public class App extends Application {
             cardView2.getChildren().add(seekerImg);
         }
 
-        Label sigilOverlay = new Label(result.isDark ? "REVERSED\n" + result.unmatchedCount : "DIRECT\n" + result.unmatchedCount);
+        Label sigilOverlay = new Label(result.isDark ? "REVERSED\n" + result.score : "DIRECT\n" + result.score);
         sigilOverlay.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-alignment: center; -fx-text-fill: " + (result.isDark ? DARK_RED_COLOR : GOLD_COLOR) + ";");
         cardView2.getChildren().add(sigilOverlay);
 
@@ -714,65 +713,51 @@ public class App extends Application {
     // ==========================================
     // FLAMES LOGIC & ALGORITHM (STRICT TRADITIONAL)
     // ==========================================
-    private static class FlamesResult {
+    private static class FlamesResult { //REMOVE MEEEEEEEEEEEEEEEEEE
         String outcomeName;
         String imageFileName;
-        int compatibilityScore;
+        int score;
         String adviceText;
         boolean isDark;
-        int unmatchedCount;
 
-        FlamesResult(String outcomeName, String imageFileName, int compatibilityScore, String adviceText, boolean isDark, int unmatchedCount) {
+        FlamesResult(String outcomeName, String imageFileName, int compatibilityScore, String adviceText, boolean isDark) {
             this.outcomeName = outcomeName;
             this.imageFileName = imageFileName;
-            this.compatibilityScore = compatibilityScore;
+            this.score = compatibilityScore;
             this.adviceText = adviceText;
             this.isDark = isDark;
-            this.unmatchedCount = unmatchedCount;
         }
     }
-
-    private FlamesResult calculateFlames(String n1, String n2) {
-        String s1 = n1.toUpperCase().replaceAll("[^A-Z]", "");
-        String s2 = n2.toUpperCase().replaceAll("[^A-Z]", "");
-
-        List<Character> list1 = new ArrayList<>();
-        for (char c : s1.toCharArray()) list1.add(c);
-
-        List<Character> list2 = new ArrayList<>();
-        for (char c : s2.toCharArray()) list2.add(c);
-
-        for (int i = list1.size() - 1; i >= 0; i--) {
-            char c = list1.get(i);
-            if (list2.contains(c)) {
-                list1.remove(i);
-                list2.remove((Character) c);
-            }
+    
+    public int getSimScore(String n1, String n2){
+        int sim = 0;
+        char c;
+        n1 = n1.toUpperCase();
+        n2 = n2.toUpperCase();
+        
+        for (int i = 0; i < n1.length(); i++){
+            c = n1.charAt(i);
+            if ((n2.indexOf(c) != -1) && (c != ' '))
+                sim++;
         }
+        
+        return sim;
+    }
 
-        int N = list1.size() + list2.size();
-        boolean isOdd = (N % 2 != 0);
-
-        List<Character> flames = new ArrayList<>(List.of('F', 'L', 'A', 'M', 'E', 'S'));
-
-        if (N > 0) {
-            int startIndex = 0;
-            while (flames.size() > 1) {
-                int removeIndex = (startIndex + N - 1) % flames.size();
-                flames.remove(removeIndex);
-                startIndex = removeIndex % flames.size();
-            }
-        }
-
-        char winningLetter = flames.get(0);
-        int score = Math.min(99, Math.max(30, 100 - (N * 5)));
+    private FlamesResult calculateFlames() {
+        int score1, score2, sum;
+        score1 = getSimScore(this.name1, this.name2);
+        score2 = getSimScore(this.name2, this.name1);
+        sum = score1 + score2;
+        
+        boolean isOdd = (sum % 2 != 0);
 
         String outcomeTitle;
         String adviceText;
         String imageFileName;
 
-        switch (winningLetter) {
-            case 'F':
+        switch (sum % "FLAMES".length()) {
+            case 1:
                 imageFileName = "friends";
                 if (isOdd) {
                     outcomeTitle = "Friends (Reversed) — The Shadow Pact";
@@ -783,7 +768,7 @@ public class App extends Application {
                 }
                 break;
 
-            case 'L':
+            case 2:
                 imageFileName = "lovers";
                 if (isOdd) {
                     outcomeTitle = "The Lovers (Reversed) — The Lost Cause";
@@ -794,7 +779,7 @@ public class App extends Application {
                 }
                 break;
 
-            case 'A':
+            case 3:
                 imageFileName = "acquaintances";
                 if (isOdd) {
                     outcomeTitle = "Affection (Reversed) — Unspoken Obsession";
@@ -805,7 +790,7 @@ public class App extends Application {
                 }
                 break;
 
-            case 'M':
+            case 4:
                 imageFileName = "marriage";
                 if (isOdd) {
                     outcomeTitle = "Marriage (Reversed) — Bound in Golden Chains";
@@ -816,7 +801,7 @@ public class App extends Application {
                 }
                 break;
 
-            case 'E':
+            case 5:
                 imageFileName = "enemies";
                 if (isOdd) {
                     outcomeTitle = "Enemies (Reversed) — Eternal Nemesis";
@@ -827,7 +812,7 @@ public class App extends Application {
                 }
                 break;
 
-            case 'S':
+            case 6:
             default:
                 imageFileName = "soulmates";
                 if (isOdd) {
@@ -840,7 +825,7 @@ public class App extends Application {
                 break;
         }
 
-        return new FlamesResult(outcomeTitle, imageFileName, score, adviceText, isOdd, N);
+        return new FlamesResult(outcomeTitle, imageFileName, sum, adviceText, isOdd);
     }
 
     public static void main(String[] args) {
