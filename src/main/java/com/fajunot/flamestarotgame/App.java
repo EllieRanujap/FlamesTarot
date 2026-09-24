@@ -59,7 +59,9 @@ public class App extends Application {
     
     //effects
     private final Image rays = new Image( getClass().getResource("/images/Rays.png").toExternalForm() );
-
+    
+    //hand
+    private final Image hand = new Image( getClass().getResource("/images/hand.png").toExternalForm() );
 
     @Override
     public void start(Stage stage) {
@@ -72,6 +74,7 @@ public class App extends Application {
         
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
+        //tarotDeckScreen();
         introExpo();
         
         //Make the screen show up
@@ -464,6 +467,13 @@ public class App extends Application {
     // ==========================================
     public void tarotDeckScreen() {
         StackPane root = createScreenWithBackground("6thBG");
+        ImageView imgHand = new ImageView( this.hand );
+        //Hand anim
+        TranslateTransition hand_anim = new TranslateTransition();
+        hand_anim.setDuration(Duration.seconds(1.25));
+        hand_anim.setNode(imgHand);
+        hand_anim.setByY(-650);
+        hand_anim.setInterpolator(Interpolator.EASE_OUT);
 
         VBox mainLayout = new VBox(16);
         mainLayout.setAlignment(Pos.CENTER);
@@ -518,11 +528,15 @@ public class App extends Application {
 
             cardRoot.getChildren().add(cardNode);
         }
+        
+        headerText.setTranslateY(-225);
 
-        mainLayout.getChildren().addAll(headerText, cardRoot);
-        root.getChildren().add(mainLayout);
+        mainLayout.getChildren().addAll(cardRoot);
+        root.getChildren().addAll(mainLayout, imgHand, headerText);
 
         fadeIn(mainLayout, 50);
+        //play anim
+        hand_anim.play();
         scene.setRoot(root);
     }
 
