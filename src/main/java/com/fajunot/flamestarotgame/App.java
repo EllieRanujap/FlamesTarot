@@ -92,6 +92,8 @@ public class App extends Application {
         StackPane root = new StackPane();
         scene = new Scene(root, 1280, 720);
         
+        playMusic(bgMusic, mainBgm, -1, 0.4);
+        
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
         //tarotDeckScreen();
@@ -265,8 +267,8 @@ public class App extends Application {
     // ==========================================
     public void mainMenu() {
         StackPane root = createScreenWithBackground("1stBG");
-        playMusic(bgMusic, mainBgm, -1, 0.6);
         
+        playMusic(bgMusic, mainBgm, -1, 0.4);
         ImageView imgTrix = new ImageView( this.trixI );
         ImageView imgRays = new ImageView( this.rays );
 
