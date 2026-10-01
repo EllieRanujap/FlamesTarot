@@ -53,6 +53,7 @@ public class App extends Application {
     private final Random random = new Random();
     private MediaPlayer bgMusic;
     private MediaPlayer sfx;
+    private MediaPlayer trixMedia;
     
     //Music Paths
     String mainBgm = getClass()
@@ -63,6 +64,12 @@ public class App extends Application {
                 .toExternalForm();
     String cardSfx = getClass()
                 .getResource("/music/cardFlip.wav")
+                .toExternalForm();
+    String trixTalk1 = getClass()
+                .getResource("/music/talkingTrix.wav")
+                .toExternalForm();
+    String trixTalk2 = getClass()
+                .getResource("/music/talkingTrix2.wav")
                 .toExternalForm();
 
     // Color Constants matching CSS Palette
@@ -865,6 +872,13 @@ public class App extends Application {
             
             KeyFrame keyFrame = new KeyFrame( Duration.millis(spd * i), event -> {
                 label.setText(msg.substring(0, index + 1));
+                if (index % 5 == 0){
+                    if (random.nextBoolean())
+                        trixMedia = playSfx(trixTalk1, 1, 0.7);
+                    else
+                        trixMedia = playSfx(trixTalk2, 1, 0.7); 
+                }
+                
             });
             
             tm.getKeyFrames().add(keyFrame);
@@ -908,4 +922,19 @@ public class App extends Application {
 
         return newMusic;
     }
+    
+    private MediaPlayer playSfx(String musicPath, int cycles, double volume) {
+        Media media = new Media(musicPath);
+        MediaPlayer newMusic = new MediaPlayer(media);
+        
+        if (cycles < 0)
+            newMusic.setCycleCount(0);
+        else
+            newMusic.setCycleCount(cycles);
+
+        newMusic.setVolume(volume);
+        newMusic.play();
+        return newMusic;
+    }
+    
 }
