@@ -31,6 +31,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+//MUSIC
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 import java.io.InputStream;
@@ -39,6 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+
+
 public class App extends Application {
 
     private Stage stage;
@@ -46,6 +51,19 @@ public class App extends Application {
     private String name1 = "";
     private String name2 = "";
     private final Random random = new Random();
+    private MediaPlayer bgMusic;
+    private MediaPlayer sfx;
+    
+    //Music Paths
+    String mainBgm = getClass()
+                .getResource("/music/main.mp3")
+                .toExternalForm();
+    String evilBgm = getClass()
+                .getResource("/music/evil.mp3")
+                .toExternalForm();
+    String cardSfx = getClass()
+                .getResource("/music/cardFlip.wav")
+                .toExternalForm();
 
     // Color Constants matching CSS Palette
     private static final String GOLD_COLOR = "#d4af37";
@@ -223,9 +241,6 @@ public class App extends Application {
         //Set Scene
         scene.setRoot(root);
         
-        
-        
-        
         //inag cllick
         btnContinue.setOnAction(click -> {
             if (++strIndex < message.length){
@@ -250,6 +265,7 @@ public class App extends Application {
     // ==========================================
     public void mainMenu() {
         StackPane root = createScreenWithBackground("1stBG");
+        playMusic(bgMusic, mainBgm, -1, 0.6);
         
         ImageView imgTrix = new ImageView( this.trixI );
         ImageView imgRays = new ImageView( this.rays );
@@ -617,6 +633,12 @@ public class App extends Application {
     // ==========================================
     public void revealFate(int chosenCardIndex) {
         FlamesResult result = calculateFlames();
+        playMusic(sfx, cardSfx, 1, 1);
+        
+        if (result.isDark)
+            playMusic(bgMusic, evilBgm, -1, 0.6);
+        
+        System.out.println(result.isDark);
 
         StackPane root = createScreenWithBackground(result.isDark ? "7thBG" : "4thBG");
 
@@ -866,5 +888,22 @@ public class App extends Application {
             tm.setCycleCount(cycles);
             
         tm.play();
+    }
+    
+    private void playMusic(MediaPlayer music, String musicPath, int cycles, double volume) {
+        if (music != null) {
+            music.stop();
+        }
+        
+        Media media = new Media(musicPath);
+        music = new MediaPlayer(media);
+        
+        if (cycles < 0)
+            music.setCycleCount(MediaPlayer.INDEFINITE);
+        else
+            music.setCycleCount(cycles);
+        
+        music.setVolume(volume);
+        music.play();
     }
 }
