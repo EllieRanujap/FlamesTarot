@@ -92,7 +92,7 @@ public class App extends Application {
         StackPane root = new StackPane();
         scene = new Scene(root, 1280, 720);
         
-        playMusic(bgMusic, mainBgm, -1, 0.4);
+        playMusic(bgMusic, mainBgm, -1, 0.6);
         
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
@@ -268,7 +268,7 @@ public class App extends Application {
     public void mainMenu() {
         StackPane root = createScreenWithBackground("1stBG");
         
-        playMusic(bgMusic, mainBgm, -1, 0.4);
+        playMusic(bgMusic, mainBgm, -1, 0.6);
         ImageView imgTrix = new ImageView( this.trixI );
         ImageView imgRays = new ImageView( this.rays );
 
@@ -637,7 +637,7 @@ public class App extends Application {
         FlamesResult result = calculateFlames();
         playMusic(sfx, cardSfx, 1, 1);
         
-        if (result.isDark)
+        if (result.isDark == true)
             playMusic(bgMusic, evilBgm, -1, 0.6);
         
         System.out.println(result.isDark);
