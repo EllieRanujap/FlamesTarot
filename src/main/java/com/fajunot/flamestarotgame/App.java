@@ -92,7 +92,7 @@ public class App extends Application {
         StackPane root = new StackPane();
         scene = new Scene(root, 1280, 720);
         
-        playMusic(bgMusic, mainBgm, -1, 0.6);
+        bgMusic = playMusic(bgMusic, mainBgm, -1, 0.6);
         
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
@@ -268,7 +268,7 @@ public class App extends Application {
     public void mainMenu() {
         StackPane root = createScreenWithBackground("1stBG");
         
-        playMusic(bgMusic, mainBgm, -1, 0.6);
+        bgMusic = playMusic(bgMusic, mainBgm, -1, 0.6);
         ImageView imgTrix = new ImageView( this.trixI );
         ImageView imgRays = new ImageView( this.rays );
 
@@ -635,13 +635,11 @@ public class App extends Application {
     // ==========================================
     public void revealFate(int chosenCardIndex) {
         FlamesResult result = calculateFlames();
-        playMusic(sfx, cardSfx, 1, 1);
+        sfx = playMusic(sfx, cardSfx, 1, 1);
         
         if (result.isDark == true)
-            playMusic(bgMusic, evilBgm, -1, 0.6);
+            bgMusic = playMusic(bgMusic, evilBgm, -1, 0.6);
         
-        System.out.println(result.isDark);
-
         StackPane root = createScreenWithBackground(result.isDark ? "7thBG" : "4thBG");
 
         VBox content = new VBox(18);
@@ -892,20 +890,22 @@ public class App extends Application {
         tm.play();
     }
     
-    private void playMusic(MediaPlayer music, String musicPath, int cycles, double volume) {
+    private MediaPlayer playMusic(MediaPlayer music, String musicPath, int cycles, double volume) {
         if (music != null) {
             music.stop();
         }
-        
+
         Media media = new Media(musicPath);
-        music = new MediaPlayer(media);
-        
+        MediaPlayer newMusic = new MediaPlayer(media);
+
         if (cycles < 0)
-            music.setCycleCount(MediaPlayer.INDEFINITE);
+            newMusic.setCycleCount(MediaPlayer.INDEFINITE);
         else
-            music.setCycleCount(cycles);
-        
-        music.setVolume(volume);
-        music.play();
+            newMusic.setCycleCount(cycles);
+
+        newMusic.setVolume(volume);
+        newMusic.play();
+
+        return newMusic;
     }
 }
