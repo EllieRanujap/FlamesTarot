@@ -83,6 +83,9 @@ public class App extends Application {
     private final Image trixU = new Image( getClass().getResource("/images/TrixterU.png").toExternalForm() );
     private final Image trixM = new Image( getClass().getResource("/images/TrixterM.png").toExternalForm() );
     private final Image trixRead = new Image( getClass().getResource("/images/TrixterRead.png").toExternalForm() );
+    private final Image trixReadI = new Image( getClass().getResource("/images/TrixterReadI.png").toExternalForm() );
+    private final Image trixReadE = new Image( getClass().getResource("/images/TrixterReadE.png").toExternalForm() );
+    private final Image trixReadM = new Image( getClass().getResource("/images/TrixterReadM.png").toExternalForm() );
     
     //effects
     private final Image rays = new Image( getClass().getResource("/images/Rays.png").toExternalForm() );
@@ -104,7 +107,9 @@ public class App extends Application {
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
         //tarotDeckScreen();
-        introExpo();
+        //introExpo();
+        askNamesScreen();
+        //trixterReading();
         
         //Make the screen show up
         stage.setScene(scene);
@@ -329,7 +334,7 @@ public class App extends Application {
         imgTrix.setTranslateY(100);
         
         //Trix Talking
-        trixTalk(imgTrix, 100, 10);
+        trixTalk(imgTrix, 100, 10, false);
         
         root.getChildren().add(imgRays);
         root.getChildren().add(imgTrix);
@@ -366,16 +371,21 @@ public class App extends Application {
 
         Label warningTitle = new Label("THE SACRED COVENANT");
         warningTitle.getStyleClass().add("dark-red-header");
-
-        Label consentText = new Label(
-            """
-            Before the cards are dealt, take pause:
-            By entering this ritual, you anchor a temporary fragment
-            of your psychological vibration into the deck.
-            What is revealed can never be unlearned.
-            """
-        );
+        
+        String consentStr = """
+                            Before the cards are dealt, take pause:
+                            By entering this ritual, you anchor a temporary fragment
+                            of your psychological vibration into the deck.
+                            What is revealed can never be unlearned.
+                            """;
+        Label consentText = new Label();
         consentText.getStyleClass().add("consent-text");
+        
+        //Make it animated ==============================================
+        Timeline anim_txt_1;
+        anim_txt_1 = textScrollAnim (consentStr, consentText, 25);
+        anim_txt_1.playFromStart();
+        //===================================================================
 
         Button btnConsent = new Button("I CONSENT. BIND MY ESSENCE");
         btnConsent.getStyleClass().add("dark-button");
@@ -470,7 +480,7 @@ public class App extends Application {
         layoutContainer.setPadding(new Insets(30));
 
         root.getChildren().add(layoutContainer);
-        fadeIn(layoutContainer, 50);
+        //fadeIn(layoutContainer, 50);
         scene.setRoot(root);
 
         btnSubmit.setOnAction(click -> {
@@ -485,12 +495,83 @@ public class App extends Application {
             this.name1 = n1;
             this.name2 = n2;
 
-            playFastTransition(this::tarotDeckScreen);
+            playFastTransition(this::trixterReading);
+            this.strIndex = 0;
         });
     }
 
+    /*==========================================
+       SCREEN 4: TRIXTER READING
+    ===========================================*/
+    public void trixterReading(){
+        StackPane root = createScreenWithBackground("6thBG");
+        
+        ImageView imgTrix = new ImageView( this.trixI );
+        
+        //TEXT
+        Label dialogue = new Label();
+        
+        Button btnContinue = new Button("Continue");
+        btnContinue.setVisible(false);
+        
+        String message[] = {
+            "So... " + this.name1 + " and " + this.name2 + "...",
+            "What does fate have for this pair, I wonder.",
+            "Will it be fortune? Will it be despair?"
+        };
+        
+        //Style
+        dialogue.getStyleClass().add("primer-text");
+        dialogue.setScaleX(1.5);
+        dialogue.setScaleY(1.5);
+        
+        //Animate Text
+        anim_txt = textScrollAnim (message[strIndex], dialogue, 25);
+        anim_txt.setOnFinished( event -> {
+            btnContinue.setVisible(true);
+        });
+        anim_txt.playFromStart();
+        
+        btnContinue.setTranslateY(100);
+        
+        
+        //Trix modif
+        imgTrix.setScaleX(1.5);
+        imgTrix.setScaleY(1.5);
+        imgTrix.setTranslateY(100);
+        
+        //Trix Talking
+        trixTalk(imgTrix, 100, 2, true);
+        
+        //attach to the root
+        root.getChildren().addAll(imgTrix, dialogue, btnContinue);
+        
+        //inag cllick
+        btnContinue.setOnAction(click -> {
+            if (++strIndex < message.length){
+                anim_txt = textScrollAnim (message[strIndex], dialogue, 25);
+                
+                trixTalk(imgTrix, 100, 3, true);
+                
+                //Dapat naa ni cya dri para mu trigger cya on every new message
+                anim_txt.setOnFinished( event -> {
+                    btnContinue.setVisible(true);
+                });
+                
+                anim_txt.playFromStart();
+                btnContinue.setVisible(false);
+                return;
+            }
+                
+            playFastTransition(this::tarotDeckScreen);
+            this.strIndex = 0;
+        });
+        
+        scene.setRoot(root);
+    }
+
     // ==========================================
-    // SCREEN 4: 6-CARD BLANK DECK (ALTAR LAYOUT)
+    // SCREEN 5: 6-CARD BLANK DECK (ALTAR LAYOUT)
     // ==========================================
     public void tarotDeckScreen() {
         StackPane root = createScreenWithBackground("6thBG");
@@ -510,8 +591,9 @@ public class App extends Application {
         // Header Labels (Positioned naturally in layout stream)
         Label title = new Label("THE ALTAR OF DESTINY");
         title.getStyleClass().add("gold-header-medium");
-
-        Label instruction = new Label("Select 1 of the 6 cards to unlock the fate between " + this.name1 + " & " + this.name2);
+        
+        String instructStr = "Pick a card, darling.";
+        Label instruction = new Label(instructStr);
         instruction.getStyleClass().add("instruction-label");
 
         VBox headerText = new VBox(8, title, instruction);
@@ -744,7 +826,7 @@ public class App extends Application {
     // ==========================================
     // FLAMES LOGIC & ALGORITHM (STRICT TRADITIONAL)
     // ==========================================
-    private static class FlamesResult { //REMOVE MEEEEEEEEEEEEEEEEEE
+    private static class FlamesResult { //
         String outcomeName;
         String imageFileName;
         int score;
@@ -887,13 +969,18 @@ public class App extends Application {
         return tm;
     }
     
-    public void trixTalk(ImageView imgTrix, int spd, int cycles){
-
-        Timeline tm = new Timeline(
+    public void trixTalk(ImageView imgTrix, int spd, int cycles, boolean glow){
+        Timeline tm = (glow == false)? new Timeline(
             new KeyFrame(Duration.millis(spd), e -> imgTrix.setImage(trixM)),
             new KeyFrame(Duration.millis(spd * 2), e -> imgTrix.setImage(trixA)),
             new KeyFrame(Duration.millis(spd * 3), e -> imgTrix.setImage(trixE)),
             new KeyFrame(Duration.millis(spd * 4), e -> imgTrix.setImage(trixI))
+        ) : 
+        new Timeline(
+            new KeyFrame(Duration.millis(spd), e -> imgTrix.setImage(trixReadM)),
+            new KeyFrame(Duration.millis(spd * 2), e -> imgTrix.setImage(trixRead)),
+            new KeyFrame(Duration.millis(spd * 3), e -> imgTrix.setImage(trixReadE)),
+            new KeyFrame(Duration.millis(spd * 4), e -> imgTrix.setImage(trixReadI))
         );
         
         if (cycles == -1)
