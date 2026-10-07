@@ -379,14 +379,8 @@ public class App extends Application {
                             of your psychological vibration into the deck.
                             What is revealed can never be unlearned.
                             """;
-        Label consentText = new Label();
+        Label consentText = new Label(consentStr);
         consentText.getStyleClass().add("consent-text");
-        
-        //Make it animated ==============================================
-        Timeline anim_txt_1;
-        anim_txt_1 = textScrollAnim (consentStr, consentText, 25);
-        anim_txt_1.playFromStart();
-        //===================================================================
 
         Button btnConsent = new Button("I CONSENT. BIND MY ESSENCE");
         btnConsent.getStyleClass().add("dark-button");
@@ -740,7 +734,7 @@ public class App extends Application {
         spin.setCycleCount(Animation.INDEFINITE);
         spin.setInterpolator(Interpolator.LINEAR);
         spin.play();
-        imgRays.setOpacity(0.2);
+        imgRays.setOpacity(0.1);
         imgRays.setScaleX(3.5);
         imgRays.setScaleY(3.5);
         
