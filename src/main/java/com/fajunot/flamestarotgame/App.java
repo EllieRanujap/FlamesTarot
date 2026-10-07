@@ -37,8 +37,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
 
 import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -54,6 +52,7 @@ public class App extends Application {
     private MediaPlayer bgMusic;
     private MediaPlayer sfx;
     private MediaPlayer trixMedia;
+    private FlamesResult result;
     
     //Music Paths
     String mainBgm = getClass()
@@ -86,9 +85,11 @@ public class App extends Application {
     private final Image trixReadI = new Image( getClass().getResource("/images/TrixterReadI.png").toExternalForm() );
     private final Image trixReadE = new Image( getClass().getResource("/images/TrixterReadE.png").toExternalForm() );
     private final Image trixReadM = new Image( getClass().getResource("/images/TrixterReadM.png").toExternalForm() );
+    private final Image trixBad = new Image( getClass().getResource("/images/TrixterBad.png").toExternalForm() );
     
     //effects
     private final Image rays = new Image( getClass().getResource("/images/Rays.png").toExternalForm() );
+    private final Image raysBad = new Image( getClass().getResource("/images/RaysBad.png").toExternalForm() );
     
     //hand
     private final Image hand = new Image( getClass().getResource("/images/hand.png").toExternalForm() );
@@ -461,7 +462,6 @@ public class App extends Application {
 
         Label lbl2 = new Label(activePrompt.targetLabel);
         lbl2.setWrapText(true);
-        lbl2.setMaxWidth(480);
         lbl2.setTextAlignment(TextAlignment.CENTER);
         lbl2.getStyleClass().add("input-label");
 
@@ -504,7 +504,7 @@ public class App extends Application {
        SCREEN 4: TRIXTER READING
     ===========================================*/
     public void trixterReading(){
-        StackPane root = createScreenWithBackground("6thBG");
+        StackPane root = createScreenWithBackground("DarkBG");
         
         ImageView imgTrix = new ImageView( this.trixI );
         
@@ -610,8 +610,6 @@ public class App extends Application {
         double spacing = 70;
 
         for (int i = 0; i < 6; i++) {
-            final int cardIndex = i;
-
             StackPane cardNode = createBlankCardNode(i + 1);
             cardNode.setPrefSize(130, 195);
 
@@ -631,10 +629,7 @@ public class App extends Application {
             cardNode.getTransforms().add(rot);
 
             // Card Click Listener
-            cardNode.setOnMouseClicked(e -> {
-                e.consume();
-                playFastTransition(() -> revealFate(cardIndex));
-            });
+            cardNode.setOnMouseClicked(e -> playFastTransition(this::trixterReveal));
 
             cardRoot.getChildren().add(cardNode);
         }
@@ -719,11 +714,60 @@ public class App extends Application {
         return card;
     }
 
+    /*==========================================
+       SCREEN 6: TRIXTER REVEAL
+    ===========================================*/
+    public void trixterReveal(){
+        StackPane root = createScreenWithBackground("DarkBG");
+        Timeline tm;
+        ImageView imgTrix = new ImageView( this.trixReadM );
+        ImageView imgRays = new ImageView( this.rays );
+        PauseTransition wait = new PauseTransition(Duration.seconds(1.5));
+        
+        //Trix modif
+        imgTrix.setScaleX(1.5);
+        imgTrix.setScaleY(1.5);
+        imgTrix.setTranslateY(100);
+        
+        tm = trixTalk(imgTrix, 250, 5, true);
+        
+        //attach to the root
+        root.getChildren().addAll(imgRays, imgTrix);
+        
+        //Spin rays
+        RotateTransition spin = new RotateTransition(Duration.seconds(16), imgRays);
+        spin.setByAngle(360);
+        spin.setCycleCount(Animation.INDEFINITE);
+        spin.setInterpolator(Interpolator.LINEAR);
+        spin.play();
+        imgRays.setOpacity(0.2);
+        imgRays.setScaleX(3.5);
+        imgRays.setScaleY(3.5);
+        
+        //anim wait end
+        tm.setOnFinished( e ->{
+            wait.play();
+            
+            this.result = calculateFlames();
+            
+            if (this.result.isDark){
+                imgTrix.setImage( this.trixBad );
+                imgRays.setImage( this.raysBad );
+            }
+        });
+        
+        wait.setOnFinished(e -> {
+            revealFate();
+        });
+        
+        scene.setRoot(root);
+    }
+    
+
     // ==========================================
-    // SCREEN 5: THE FINAL SPREAD (THE READING)
+    // SCREEN 7: THE FINAL SPREAD (THE READING)
     // ==========================================
-    public void revealFate(int chosenCardIndex) {
-        FlamesResult result = calculateFlames();
+    public void revealFate() {
         sfx = playMusic(sfx, cardSfx, 1, 1);
         
         if (result.isDark == true)
@@ -969,7 +1013,7 @@ public class App extends Application {
         return tm;
     }
     
-    public void trixTalk(ImageView imgTrix, int spd, int cycles, boolean glow){
+    public Timeline trixTalk(ImageView imgTrix, int spd, int cycles, boolean glow){
         Timeline tm = (glow == false)? new Timeline(
             new KeyFrame(Duration.millis(spd), e -> imgTrix.setImage(trixM)),
             new KeyFrame(Duration.millis(spd * 2), e -> imgTrix.setImage(trixA)),
@@ -989,6 +1033,7 @@ public class App extends Application {
             tm.setCycleCount(cycles);
             
         tm.play();
+        return tm;
     }
     
     private MediaPlayer playMusic(MediaPlayer music, String musicPath, int cycles, double volume) {
