@@ -118,8 +118,8 @@ public class App extends Application {
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
         //tarotDeckScreen();
-        introExpo();
-        //askNamesScreen();
+        //introExpo();
+        askNamesScreen();
         //trixterReading();
         
         //Make the screen show up
@@ -730,7 +730,18 @@ public class App extends Application {
         ImageView imgTrix = new ImageView( this.trixReadM );
         ImageView imgRays = new ImageView( this.rays );
         ImageView imgZodiac = new ImageView( this.zodiacCircle );
-        PauseTransition wait = new PauseTransition(Duration.seconds(1.5));
+        PauseTransition waitName1 = new PauseTransition(Duration.seconds(1));
+        PauseTransition waitName1Finish = new PauseTransition(Duration.seconds(1));
+        PauseTransition waitName2 = new PauseTransition(Duration.seconds(1));
+        PauseTransition waitResult = new PauseTransition(Duration.seconds(1.5));
+        Label nameDisplay = new Label();
+        
+        //Name Text
+        nameDisplay.setText(this.name1);
+        nameDisplay.getStyleClass().add("primer-text");
+        nameDisplay.setTranslateY(-250);
+        nameDisplay.setScaleX(3);
+        nameDisplay.setScaleY(3);
         
         //imgZodiac
         imgZodiac.setScaleX(1);
@@ -745,7 +756,7 @@ public class App extends Application {
         tm = trixTalk(imgTrix, 250, 4, true);
         
         //attach to the root
-        root.getChildren().addAll(imgRays, imgZodiac, imgTrix);
+        root.getChildren().addAll(imgRays, imgZodiac, imgTrix, nameDisplay);
         
         //Spin rays
         RotateTransition spin = new RotateTransition(Duration.seconds(16), imgRays);
@@ -757,6 +768,7 @@ public class App extends Application {
         imgRays.setScaleX(3.5);
         imgRays.setScaleY(3.5);
         
+        //Spin Zodiac
         RotateTransition spin2 = new RotateTransition(Duration.seconds(4), imgZodiac);
         spin2.setByAngle(360);
         spin2.setCycleCount(Animation.INDEFINITE);
@@ -767,9 +779,11 @@ public class App extends Application {
         
         sfx = playSfx(introMagicSfx, 1, 1);
         
+        waitName1.play();
+        
         //anim wait end
         tm.setOnFinished( e ->{
-            wait.play();
+            waitResult.play();
             
             this.result = calculateFlames();
             spin2.setRate(4);
@@ -784,11 +798,33 @@ public class App extends Application {
             }
         });
         
-        wait.setOnFinished(e -> {
+        waitName1.setOnFinished(e -> {
+            fadeNode(nameDisplay);
+            waitName1Finish.play();
+        });
+        
+        waitName1Finish.setOnFinished(e -> {
+            nameDisplay.setText(this.name2);
+            nameDisplay.setOpacity(1);
+            waitName2.play();
+        });
+        
+        waitName2.setOnFinished(e -> {
+            fadeNode(nameDisplay);
+        });
+        
+        waitResult.setOnFinished(e -> {
             playFastTransition(this::revealFate);
         });
         
         scene.setRoot(root);
+    }
+    
+    public void fadeNode(Node node){
+        FadeTransition ft = new FadeTransition(Duration.millis(1000), node);
+        ft.setFromValue(1.0); 
+        ft.setToValue(0.0);   
+        ft.play();
     }
     
 
