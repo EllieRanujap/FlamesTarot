@@ -118,8 +118,8 @@ public class App extends Application {
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
         //tarotDeckScreen();
-        //introExpo();
-        askNamesScreen();
+        introExpo();
+        //askNamesScreen();
         //trixterReading();
         
         //Make the screen show up
