@@ -70,6 +70,15 @@ public class App extends Application {
     String trixTalk2 = getClass()
                 .getResource("/music/talkingTrix2.wav")
                 .toExternalForm();
+    String goodMagicSfx = getClass()
+                .getResource("/music/goodMagicSfx.wav")
+                .toExternalForm();
+    String badMagicSfx = getClass()
+                .getResource("/music/badMagicSfx.wav")
+                .toExternalForm();
+    String introMagicSfx = getClass()
+                .getResource("/music/introMagicSfx.wav")
+                .toExternalForm();
 
     // Color Constants matching CSS Palette
     private static final String GOLD_COLOR = "#d4af37";
@@ -90,6 +99,7 @@ public class App extends Application {
     //effects
     private final Image rays = new Image( getClass().getResource("/images/Rays.png").toExternalForm() );
     private final Image raysBad = new Image( getClass().getResource("/images/RaysBad.png").toExternalForm() );
+    private final Image zodiacCircle = new Image( getClass().getResource("/images/ZodiacCircle.png").toExternalForm() );
     
     //hand
     private final Image hand = new Image( getClass().getResource("/images/hand.png").toExternalForm() );
@@ -103,7 +113,7 @@ public class App extends Application {
         StackPane root = new StackPane();
         scene = new Scene(root, 1280, 720);
         
-        bgMusic = playMusic(bgMusic, mainBgm, -1, 0.6);
+        bgMusic = playMusic(bgMusic, mainBgm, -1, 0.35);
         
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
@@ -281,7 +291,7 @@ public class App extends Application {
     public void mainMenu() {
         StackPane root = createScreenWithBackground("1stBG");
         
-        bgMusic = playMusic(bgMusic, mainBgm, -1, 0.6);
+        bgMusic = playMusic(bgMusic, mainBgm, -1, 0.35);
         ImageView imgTrix = new ImageView( this.trixI );
         ImageView imgRays = new ImageView( this.rays );
 
@@ -518,6 +528,7 @@ public class App extends Application {
         dialogue.getStyleClass().add("primer-text");
         dialogue.setScaleX(1.5);
         dialogue.setScaleY(1.5);
+        dialogue.setTranslateY(-250);
         
         //Animate Text
         anim_txt = textScrollAnim (message[strIndex], dialogue, 25);
@@ -526,8 +537,7 @@ public class App extends Application {
         });
         anim_txt.playFromStart();
         
-        btnContinue.setTranslateY(100);
-        
+        btnContinue.setTranslateY(300);
         
         //Trix modif
         imgTrix.setScaleX(1.5);
@@ -623,7 +633,10 @@ public class App extends Application {
             cardNode.getTransforms().add(rot);
 
             // Card Click Listener
-            cardNode.setOnMouseClicked(e -> playFastTransition(this::trixterReveal));
+            cardNode.setOnMouseClicked(e ->{ 
+                playFastTransition(this::trixterReveal);
+                sfx = playMusic(sfx, cardSfx, 1, 1);
+            });
 
             cardRoot.getChildren().add(cardNode);
         }
@@ -716,17 +729,22 @@ public class App extends Application {
         Timeline tm;
         ImageView imgTrix = new ImageView( this.trixReadM );
         ImageView imgRays = new ImageView( this.rays );
+        ImageView imgZodiac = new ImageView( this.zodiacCircle );
         PauseTransition wait = new PauseTransition(Duration.seconds(1.5));
+        
+        //imgZodiac
+        imgZodiac.setScaleX(0.06125);
+        imgZodiac.setScaleY(0.06125);
         
         //Trix modif
         imgTrix.setScaleX(1.5);
         imgTrix.setScaleY(1.5);
         imgTrix.setTranslateY(100);
         
-        tm = trixTalk(imgTrix, 250, 5, true);
+        tm = trixTalk(imgTrix, 250, 4, true);
         
         //attach to the root
-        root.getChildren().addAll(imgRays, imgTrix);
+        root.getChildren().addAll(imgRays, imgZodiac, imgTrix);
         
         //Spin rays
         RotateTransition spin = new RotateTransition(Duration.seconds(16), imgRays);
@@ -738,6 +756,8 @@ public class App extends Application {
         imgRays.setScaleX(3.5);
         imgRays.setScaleY(3.5);
         
+        sfx = playSfx(introMagicSfx, 1, 1);
+        
         //anim wait end
         tm.setOnFinished( e ->{
             wait.play();
@@ -747,6 +767,10 @@ public class App extends Application {
             if (this.result.isDark){
                 imgTrix.setImage( this.trixBad );
                 imgRays.setImage( this.raysBad );
+                sfx = playSfx(badMagicSfx, 1, 1);
+            }
+            else{
+                sfx = playSfx(goodMagicSfx, 1, 1);
             }
         });
         
@@ -762,8 +786,6 @@ public class App extends Application {
     // SCREEN 7: THE FINAL SPREAD (THE READING)
     // ==========================================
     public void revealFate() {
-        sfx = playMusic(sfx, cardSfx, 1, 1);
-        
         if (result.isDark == true)
             bgMusic = playMusic(bgMusic, evilBgm, -1, 0.6);
         
