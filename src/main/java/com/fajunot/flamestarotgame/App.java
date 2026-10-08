@@ -785,7 +785,7 @@ public class App extends Application {
         });
         
         wait.setOnFinished(e -> {
-            revealFate();
+            playFastTransition(this::revealFate);
         });
         
         scene.setRoot(root);
