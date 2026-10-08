@@ -99,7 +99,7 @@ public class App extends Application {
     //effects
     private final Image rays = new Image( getClass().getResource("/images/Rays.png").toExternalForm() );
     private final Image raysBad = new Image( getClass().getResource("/images/RaysBad.png").toExternalForm() );
-    private final Image zodiacCircle = new Image( getClass().getResource("/images/ZodiacCircle.png").toExternalForm() );
+    private final Image zodiacCircle = new Image( getClass().getResource("/images/theMagicCircle.png").toExternalForm() );
     
     //hand
     private final Image hand = new Image( getClass().getResource("/images/hand.png").toExternalForm() );
@@ -733,8 +733,9 @@ public class App extends Application {
         PauseTransition wait = new PauseTransition(Duration.seconds(1.5));
         
         //imgZodiac
-        imgZodiac.setScaleX(0.06125);
-        imgZodiac.setScaleY(0.06125);
+        imgZodiac.setScaleX(1);
+        imgZodiac.setScaleY(1);
+        imgZodiac.setOpacity(0.2);
         
         //Trix modif
         imgTrix.setScaleX(1.5);
@@ -756,6 +757,14 @@ public class App extends Application {
         imgRays.setScaleX(3.5);
         imgRays.setScaleY(3.5);
         
+        RotateTransition spin2 = new RotateTransition(Duration.seconds(4), imgZodiac);
+        spin2.setByAngle(360);
+        spin2.setCycleCount(Animation.INDEFINITE);
+        spin2.setInterpolator(Interpolator.LINEAR);
+        spin2.play();
+        imgZodiac.setOpacity(0.1);
+        applyPulseAnimation(imgZodiac, 800);
+        
         sfx = playSfx(introMagicSfx, 1, 1);
         
         //anim wait end
@@ -763,6 +772,7 @@ public class App extends Application {
             wait.play();
             
             this.result = calculateFlames();
+            spin2.setRate(4);
             
             if (this.result.isDark){
                 imgTrix.setImage( this.trixBad );
