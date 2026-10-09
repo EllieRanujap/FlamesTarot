@@ -54,6 +54,7 @@ public class App extends Application {
     private MediaPlayer sfx;
     private MediaPlayer trixMedia;
     private FlamesResult result;
+    private double rotHolder;
     
     //Music Paths
     String mainBgm = getClass()
@@ -80,6 +81,9 @@ public class App extends Application {
     String introMagicSfx = getClass()
                 .getResource("/music/introMagicSfx.wav")
                 .toExternalForm();
+    String whisperSfx = getClass()
+                .getResource("/music/whisper.wav")
+                .toExternalForm();
 
     // Color Constants matching CSS Palette
     private static final String GOLD_COLOR = "#d4af37";
@@ -104,6 +108,8 @@ public class App extends Application {
     
     //hand
     private final Image hand = new Image( getClass().getResource("/images/hand.png").toExternalForm() );
+    
+    private final Image lightBG = new Image( getClass().getResource("/images/LightBG.png").toExternalForm() );
 
     @Override
     public void start(Stage stage) {
@@ -281,7 +287,7 @@ public class App extends Application {
                 btnContinue.setVisible(false);
                 return;
             }
-                
+               
             playFastTransition(this::mainMenu);
         });
     }
@@ -368,13 +374,19 @@ public class App extends Application {
         fadeIn(root, 50);
         scene.setRoot(root);
 
-        btnBegin.setOnAction(click -> playFastTransition(this::soulConsentScreen));
+        btnBegin.setOnAction(click -> {
+            playFastTransition(this::soulConsentScreen);
+            anim_txt_1.stop();
+        });
     }
 
     // ==========================================
     // SCREEN 2: SOUL CONSENT
     // ==========================================
     public void soulConsentScreen() {
+        if (trixMedia != null) 
+            trixMedia.stop(); // Trixter quiet if still talking
+        
         StackPane root = createScreenWithBackground("3rdBG");
 
         Label warningSigil = new Label("⚖");
@@ -727,6 +739,8 @@ public class App extends Application {
         PauseTransition waitResult = new PauseTransition(Duration.seconds(1.5));
         Label nameDisplay = new Label();
         
+        this.bgMusic.setVolume(0.12);
+        
         //Name Text
         nameDisplay.setText(this.name1);
         nameDisplay.getStyleClass().add("primer-text");
@@ -769,6 +783,7 @@ public class App extends Application {
         applyPulseAnimation(imgZodiac, 800);
         
         sfx = playSfx(introMagicSfx, 1, 1);
+        sfx = playSfx(whisperSfx, 1, 1);
         
         waitName1.play();
         
@@ -777,15 +792,19 @@ public class App extends Application {
             waitResult.play();
             
             this.result = calculateFlames();
+            spin.setRate(1.5);
             spin2.setRate(4);
             
             if (this.result.isDark){
+                rotHolder = imgRays.getRotate();
                 imgTrix.setImage( this.trixBad );
                 imgRays.setImage( this.raysBad );
-                sfx = playSfx(badMagicSfx, 1, 1);
+                imgRays.setRotate(rotHolder);
+                sfx = playSfx(badMagicSfx, 1, 1.5);
             }
             else{
-                sfx = playSfx(goodMagicSfx, 1, 1);
+                sfx = playSfx(goodMagicSfx, 1, 1.5);
+                root.getChildren().add(1, new ImageView(lightBG));
             }
         });
         
@@ -823,8 +842,10 @@ public class App extends Application {
     // SCREEN 7: THE FINAL SPREAD (THE READING)
     // ==========================================
     public void revealFate() {
+        this.bgMusic.setVolume(0.2);
+        
         if (result.isDark == true)
-            bgMusic = playMusic(bgMusic, evilBgm, -1, 0.4);
+            bgMusic = playMusic(bgMusic, evilBgm, -1, 0.2);
         
         StackPane root = createScreenWithBackground(result.isDark ? "7thBG" : "4thBG");
 
