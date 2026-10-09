@@ -31,6 +31,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.transform.Rotate;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+
 //MUSIC
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -413,17 +414,7 @@ public class App extends Application {
     For different prompt each time
     Just 3 strings, the title and the two "label" like in HTML
     */
-    private static class PromptSet {
-        String title;
-        String seekerLabel;
-        String targetLabel;
-
-        PromptSet(String title, String seekerLabel, String targetLabel) {
-            this.title = title;
-            this.seekerLabel = seekerLabel;
-            this.targetLabel = targetLabel;
-        }
-    }
+    
 
     //Basically just plac
     private final List<PromptSet> promptPresets = List.of(
@@ -454,17 +445,17 @@ public class App extends Application {
 
         PromptSet activePrompt = promptPresets.get(random.nextInt(promptPresets.size()));
 
-        Label title = new Label(activePrompt.title);
+        Label title = new Label(activePrompt.getTitle());
         title.getStyleClass().add("gold-header");
 
-        Label lbl1 = new Label(activePrompt.seekerLabel);
+        Label lbl1 = new Label(activePrompt.getSeekerLabel());
         lbl1.getStyleClass().add("input-label");
 
         TextField fldName1 = new TextField();
         fldName1.setPromptText("e.g. Jaelica Fabian");
         fldName1.setMaxWidth(480);
 
-        Label lbl2 = new Label(activePrompt.targetLabel);
+        Label lbl2 = new Label(activePrompt.getTargetLabel());
         lbl2.setWrapText(true);
         lbl2.setTextAlignment(TextAlignment.CENTER);
         lbl2.getStyleClass().add("input-label");
@@ -833,7 +824,7 @@ public class App extends Application {
     // ==========================================
     public void revealFate() {
         if (result.isDark == true)
-            bgMusic = playMusic(bgMusic, evilBgm, -1, 0.6);
+            bgMusic = playMusic(bgMusic, evilBgm, -1, 0.4);
         
         StackPane root = createScreenWithBackground(result.isDark ? "7thBG" : "4thBG");
 
