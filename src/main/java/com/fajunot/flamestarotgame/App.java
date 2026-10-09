@@ -90,26 +90,25 @@ public class App extends Application {
     private static final String DARK_RED_COLOR = "#e63946";
     
     //Pics ni Trix
-    private final Image trixA = new Image( getClass().getResource("/images/TrixterA.png").toExternalForm() );
-    private final Image trixI = new Image( getClass().getResource("/images/TrixterI.png").toExternalForm() );
-    private final Image trixE = new Image( getClass().getResource("/images/TrixterE.png").toExternalForm() );
-    private final Image trixU = new Image( getClass().getResource("/images/TrixterU.png").toExternalForm() );
-    private final Image trixM = new Image( getClass().getResource("/images/TrixterM.png").toExternalForm() );
-    private final Image trixRead = new Image( getClass().getResource("/images/TrixterRead.png").toExternalForm() );
-    private final Image trixReadI = new Image( getClass().getResource("/images/TrixterReadI.png").toExternalForm() );
-    private final Image trixReadE = new Image( getClass().getResource("/images/TrixterReadE.png").toExternalForm() );
-    private final Image trixReadM = new Image( getClass().getResource("/images/TrixterReadM.png").toExternalForm() );
-    private final Image trixBad = new Image( getClass().getResource("/images/TrixterBad.png").toExternalForm() );
+    private final Image trixA = loadResourceImage("TrixterA");
+    private final Image trixI = loadResourceImage("TrixterI");
+    private final Image trixE = loadResourceImage("TrixterE");
+    private final Image trixM = loadResourceImage("TrixterM");
+    private final Image trixRead = loadResourceImage("TrixterRead");
+    private final Image trixReadI = loadResourceImage("TrixterReadI");
+    private final Image trixReadE = loadResourceImage("TrixterReadE");
+    private final Image trixReadM = loadResourceImage("TrixterReadM");
+    private final Image trixBad = loadResourceImage("TrixterBad");
     
     //effects
-    private final Image rays = new Image( getClass().getResource("/images/Rays.png").toExternalForm() );
-    private final Image raysBad = new Image( getClass().getResource("/images/RaysBad.png").toExternalForm() );
-    private final Image zodiacCircle = new Image( getClass().getResource("/images/theMagicCircle.png").toExternalForm() );
+    private final Image rays = loadResourceImage("Rays");
+    private final Image raysBad = loadResourceImage("RaysBad");;
+    private final Image zodiacCircle = loadResourceImage("theMagicCircle");
     
     //hand
-    private final Image hand = new Image( getClass().getResource("/images/hand.png").toExternalForm() );
+    private final Image hand = loadResourceImage("hand");;
     
-    private final Image lightBG = new Image( getClass().getResource("/images/LightBG.png").toExternalForm() );
+    private final Image lightBG = loadResourceImage("LightBG");;
 
     @Override
     public void start(Stage stage) {
@@ -316,9 +315,8 @@ public class App extends Application {
         primerText.getStyleClass().add("primer-text");
         
         //Make it animated ==============================================
-        Timeline anim_txt_1;
-        anim_txt_1 = textScrollAnim (primerStr, primerText, 25);
-        anim_txt_1.playFromStart();
+        anim_txt = textScrollAnim (primerStr, primerText, 25);
+        anim_txt.playFromStart();
         //===================================================================
 
         Button btnBegin = new Button("READ YOUR FATE");
@@ -376,7 +374,7 @@ public class App extends Application {
 
         btnBegin.setOnAction(click -> {
             playFastTransition(this::soulConsentScreen);
-            anim_txt_1.stop();
+            anim_txt.stop();
         });
     }
 
