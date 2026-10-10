@@ -439,23 +439,19 @@ public class App extends Application {
         
         //Style
         dialogue.getStyleClass().add("primer-text");
-        dialogue.setScaleX(1.5);
-        dialogue.setScaleY(1.5);
-        dialogue.setTranslateY(-250);
+        scaleNode(dialogue, 1.5);
+        moveNode(dialogue, 0, -250);
         
         //Animate Text
         anim_txt = textScrollAnim (message[strIndex], dialogue, 25);
-        anim_txt.setOnFinished( event -> {
-            btnContinue.setVisible(true);
-        });
+        anim_txt.setOnFinished( event -> btnContinue.setVisible(true) );
         anim_txt.playFromStart();
         
-        btnContinue.setTranslateY(300);
+        moveNode(btnContinue, 0, 300);
         
         //Trix modif
-        imgTrix.setScaleX(1.5);
-        imgTrix.setScaleY(1.5);
-        imgTrix.setTranslateY(100);
+        scaleNode(imgTrix, 1.5);
+        moveNode(imgTrix, 0, 100);
         
         //Trix Talking
         trixTalk(imgTrix, 100, 2, true);
@@ -471,9 +467,7 @@ public class App extends Application {
                 trixTalk(imgTrix, 100, 3, true);
                 
                 //Dapat naa ni cya dri para mu trigger cya on every new message
-                anim_txt.setOnFinished( event -> {
-                    btnContinue.setVisible(true);
-                });
+                anim_txt.setOnFinished( event -> btnContinue.setVisible(true) );
                 
                 anim_txt.playFromStart();
                 btnContinue.setVisible(false);
