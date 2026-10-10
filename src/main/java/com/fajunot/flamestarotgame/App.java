@@ -499,7 +499,7 @@ public class App extends Application {
         mainLayout.setAlignment(Pos.TOP_CENTER);
         mainLayout.setPadding(new Insets(40, 10, 10, 10));
 
-        // Header Labels (Positioned naturally in layout stream)
+        // Header Labels 
         Label title = new Label("THE ALTAR OF DESTINY");
         title.getStyleClass().add("gold-header-medium");
         
@@ -509,7 +509,7 @@ public class App extends Application {
 
         VBox headerText = new VBox(8, title, instruction);
         headerText.setAlignment(Pos.CENTER);
-        headerText.setTranslateY(50);
+        moveNode(headerText, 0, 50);
 
         // Card Container (Expanded bounds so transformed cards remain clickable)
         Pane cardRoot = new Pane();
@@ -519,7 +519,8 @@ public class App extends Application {
         double centerX = 325;
         double centerY = 200;
         double spacing = 70;
-
+        
+        //Cards
         for (int i = 0; i < 6; i++) {
             StackPane cardNode = createBlankCardNode(i + 1);
             cardNode.setPrefSize(130, 195);
@@ -568,13 +569,9 @@ public class App extends Application {
         
 
         if (blankImg != null) {
-
             cardImgView.setImage(blankImg);
-
             cardImgView.setFitHeight(195);
-
-            double targetWidth =
-                195.0 * (blankImg.getWidth() / blankImg.getHeight());
+            double targetWidth = 195.0 * (blankImg.getWidth() / blankImg.getHeight());
 
             cardImgView.setFitWidth(targetWidth);
             cardImgView.setPreserveRatio(true);
@@ -589,9 +586,7 @@ public class App extends Application {
             card.setMaxHeight(195);
 
             card.getChildren().add(cardImgView);
-
         } else {
-
             Label placeholder = new Label("✦\nCARD " + cardNumber);
             placeholder.getStyleClass().add("card-placeholder");
 
@@ -609,8 +604,7 @@ public class App extends Application {
         card.setPickOnBounds(false); //Hitbox is the shape, not a set rectangle anymore
 
         card.setOnMouseEntered(e -> {
-
-            card.setTranslateY(-6);
+            moveNode(card, 0, -6);
 
             DropShadow hoverGlow = new DropShadow();
             hoverGlow.setColor(Color.web(GOLD_COLOR, 0.95));
@@ -620,8 +614,7 @@ public class App extends Application {
         });
 
         card.setOnMouseExited(e -> {
-
-            card.setTranslateY(0);
+            moveNode(card, 0, 0);
             card.setEffect(defaultGlow);
         });
 
@@ -674,7 +667,7 @@ public class App extends Application {
         sfx = playSfx(whisperSfx, 1, 1);
         
         waitName1.play();
-        
+        scene.setRoot(root);
         
         //anim wait end
         tm.setOnFinished( e -> {
@@ -684,7 +677,7 @@ public class App extends Application {
             spin.setRate(1.5);
             spin2.setRate(4);
             
-            if (this.result.isDark){
+            if (this.result.getIsDark()){
                 rotHolder = imgRays.getRotate();
                 imgTrix.setImage( this.trixBad );
                 imgRays.setImage( this.raysBad );
@@ -708,18 +701,10 @@ public class App extends Application {
         });
         
         waitName2.setOnFinished(e -> fadeNode(nameDisplay) );
-        
         waitResult.setOnFinished( e -> playFastTransition(this::revealFate) );
-        
-        scene.setRoot(root);
     }
     
-    public void fadeNode(Node node){
-        FadeTransition ft = new FadeTransition(Duration.millis(1000), node);
-        ft.setFromValue(1.0); 
-        ft.setToValue(0.0);   
-        ft.play();
-    }
+    
     
 
     // ==========================================
@@ -728,17 +713,17 @@ public class App extends Application {
     public void revealFate() {
         this.bgMusic.setVolume(0.2);
         
-        if (result.isDark == true)
+        if (result.getIsDark() == true)
             bgMusic = playMusic(bgMusic, evilBgm, -1, 0.2);
         
-        StackPane root = createScreenWithBackground(result.isDark ? "7thBG" : "4thBG");
+        StackPane root = createScreenWithBackground(result.getIsDark() ? "7thBG" : "4thBG");
 
         VBox content = new VBox(18);
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(20));
 
-        Label titleBanner = new Label(result.outcomeName);
-        titleBanner.getStyleClass().add(result.isDark ? "dark-red-header-small" : "gold-header-small");
+        Label titleBanner = new Label(result.getOutcomeName());
+        titleBanner.getStyleClass().add(result.getIsDark() ? "dark-red-header-small" : "gold-header-small");
         applyPulseAnimation(titleBanner, 3200, 0.04);
 
         // Balanced side-by-side card container
@@ -749,7 +734,7 @@ public class App extends Application {
 
         // Card 1: Chosen Tarot Card Image
         ImageView cardView1 = new ImageView();
-        Image resultImg = loadResourceImage(result.imageFileName);
+        Image resultImg = loadResourceImage(result.getImageFileName());
         if (resultImg != null) {
             cardView1.setImage(resultImg);
             cardView1.setFitHeight(300);
@@ -759,15 +744,15 @@ public class App extends Application {
             cardView1.setPreserveRatio(true);
 
             DropShadow cardGlow = new DropShadow();
-            cardGlow.setColor(Color.web(result.isDark ? DARK_RED_COLOR : GOLD_COLOR, 0.85));
+            cardGlow.setColor(Color.web(result.getIsDark() ? DARK_RED_COLOR : GOLD_COLOR, 0.85));
             cardGlow.setRadius(22);
             cardView1.setEffect(cardGlow);
             altarGrid.getChildren().add(cardView1);
         }
 
         // Connective Illuminated Sigil
-        Label lineConnect = new Label(result.isDark ? "⚔" : "✦");
-        lineConnect.setStyle("-fx-font-size: 22px; -fx-text-fill: " + (result.isDark ? DARK_RED_COLOR : GOLD_COLOR) + ";");
+        Label lineConnect = new Label(result.getIsDark() ? "⚔" : "✦");
+        lineConnect.setStyle("-fx-font-size: 22px; -fx-text-fill: " + (result.getIsDark() ? DARK_RED_COLOR : GOLD_COLOR) + ";");
         applyPulseAnimation(lineConnect, 3200, 0.04);
         altarGrid.getChildren().add(lineConnect);
 
@@ -790,28 +775,28 @@ public class App extends Application {
             cardView2.getChildren().add(seekerImg);
         }
 
-        Label sigilOverlay = new Label(result.isDark ? "REVERSED\n" + result.score : "DIRECT\n" + result.score);
-        sigilOverlay.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-alignment: center; -fx-text-fill: " + (result.isDark ? DARK_RED_COLOR : GOLD_COLOR) + ";");
+        Label sigilOverlay = new Label(result.getIsDark() ? "REVERSED\n" + result.getScore() : "DIRECT\n" + result.getScore());
+        sigilOverlay.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-alignment: center; -fx-text-fill: " + (result.getIsDark() ? DARK_RED_COLOR : GOLD_COLOR) + ";");
         cardView2.getChildren().add(sigilOverlay);
 
         DropShadow card2Glow = new DropShadow();
-        card2Glow.setColor(Color.web(result.isDark ? DARK_RED_COLOR : GOLD_COLOR, 0.65));
+        card2Glow.setColor(Color.web(result.getIsDark() ? DARK_RED_COLOR : GOLD_COLOR, 0.65));
         card2Glow.setRadius(22);
         cardView2.setEffect(card2Glow);
         altarGrid.getChildren().add(cardView2);
 
-        Label adviceLabel = new Label(result.adviceText);
+        Label adviceLabel = new Label(result.getAdviceText());
         adviceLabel.setWrapText(true);
         adviceLabel.setMaxWidth(680);
-        adviceLabel.getStyleClass().add(result.isDark ? "advice-text-dark" : "advice-text-gold");
+        adviceLabel.getStyleClass().add(result.getIsDark() ? "advice-text-dark" : "advice-text-gold");
 
         VBox infoBox = new VBox(8, adviceLabel);
         infoBox.setAlignment(Pos.CENTER);
         infoBox.setMaxWidth(720);
-        infoBox.getStyleClass().add(result.isDark ? "info-box-dark" : "info-box-gold");
+        infoBox.getStyleClass().add(result.getIsDark() ? "info-box-dark" : "info-box-gold");
 
         Button btnRestart = new Button("Consult the Deck Again");
-        btnRestart.getStyleClass().add(result.isDark ? "dark-button" : "gold-button");
+        btnRestart.getStyleClass().add(result.getIsDark() ? "dark-button" : "gold-button");
 
         HBox actionBox = new HBox(btnRestart);
         actionBox.setAlignment(Pos.CENTER);
@@ -823,25 +808,6 @@ public class App extends Application {
         scene.setRoot(root);
 
         btnRestart.setOnAction(click -> playFastTransition(this::mainMenu));
-    }
-
-    // ==========================================
-    // FLAMES LOGIC & ALGORITHM (STRICT TRADITIONAL)
-    // ==========================================
-    private static class FlamesResult { //
-        String outcomeName;
-        String imageFileName;
-        int score;
-        String adviceText;
-        boolean isDark;
-
-        FlamesResult(String outcomeName, String imageFileName, int compatibilityScore, String adviceText, boolean isDark) {
-            this.outcomeName = outcomeName;
-            this.imageFileName = imageFileName;
-            this.score = compatibilityScore;
-            this.adviceText = adviceText;
-            this.isDark = isDark;
-        }
     }
     
     public int getSimScore(String n1, String n2){
@@ -858,8 +824,29 @@ public class App extends Application {
         
         return sim;
     }
-
+    
+    public static String[] imageFileNameArr = {"friends", "lovers", "acquaintances", "marriage", "enemies", "soulmates"};
+    public static String[] outcomeTitleArr = {
+        "FRIENDS — Harmonic Alliance",
+        "LOVERS — Magnetic Devotion",
+        "AFFECTION — Gentle Orbit",
+        "MARRIAGE — Sacred Covenant",
+        "ENEMIES — Fiery Friction",
+        "SOULMATES — Cosmic Synchronicity"
+    };
+    public static String[] outcomeTitleRevArr = {
+        "Friends (Reversed) — The Shadow Pact", 
+        "Lovers (Reversed) — The Lost Cause",
+        "Affection (Reversed) — Unspoken Obsession",
+        "Marriage (Reversed) — Bound in Golden Chains",
+        "Enemies (Reversed) — Eternal Nemesis",
+        "Soulmates (Reversed) — The Broken Mirror"
+    };
+    
+    
+ 
     private FlamesResult calculateFlames() {
+        FlamesResult flamesResult;
         int score1, score2, sum;
         score1 = getSimScore(this.name1, this.name2);
         score2 = getSimScore(this.name2, this.name1);
@@ -870,77 +857,60 @@ public class App extends Application {
         String outcomeTitle;
         String adviceText;
         String imageFileName;
+        
+        int rem = sum % "FLAMES".length();
 
-        switch (sum % "FLAMES".length()) {
+        //Give advice text
+        switch (rem) {
             case 1:
-                imageFileName = "friends";
-                if (isDark) {
-                    outcomeTitle = "Friends (Reversed) — The Shadow Pact";
+                if (isDark) 
                     adviceText = "Underneath a quiet alliance lies an unexpressed distance between " + this.name1 + " and " + this.name2 + ". Unspoken expectations linger, threatening to turn genuine friendship into silent resentment if boundaries are left unsaid.";
-                } else {
-                    outcomeTitle = "FRIENDS — Harmonic Alliance";
+                else 
                     adviceText = "The stars reflect a high-frequency alignment built on mutual trust and shared understanding between " + this.name1 + " and " + this.name2 + ". Protect this bond as an enduring sanctuary.";
-                }
                 break;
 
             case 2:
-                imageFileName = "lovers";
-                if (isDark) {
-                    outcomeTitle = "The Lovers (Reversed) — The Lost Cause";
+                if (isDark) 
                     adviceText = "A volatile passion burns between " + this.name1 + " and " + this.name2 + ", consumed by obsessive longing and emotional tension. Unresolved fears mask true vulnerability, pulling both souls into an addictive cycle of attraction and ruin.";
-                } else {
-                    outcomeTitle = "LOVERS — Magnetic Devotion";
+                else 
                     adviceText = "An intense magnetic resonance pulls " + this.name1 + " and " + this.name2 + " into harmony. Vulnerability and devotion build an elevated path forward.";
-                }
                 break;
 
             case 3:
-                imageFileName = "acquaintances";
-                if (isDark) {
-                    outcomeTitle = "Affection (Reversed) — Unspoken Obsession";
+                if (isDark) 
                     adviceText = "Surface-level interactions conceal hidden intensity between " + this.name1 + " and " + this.name2 + ". The emotional tether remains unresolved, trapped between fascinated curiosity and fear of rejection.";
-                } else {
-                    outcomeTitle = "AFFECTION — Gentle Orbit";
-                    adviceText = "Your tethered energy grows in steady orbit. " + this.name1 + " and " + this.name2 + " share an emerging bond that flourishes through honest conversation.";
-                }
+                else 
+                    adviceText = "Your tethered energy grows in steady orbit. " + this.name1 + " and " + this.name2 + " share an emerging bond that flourishes through honest conversation."; 
                 break;
 
             case 4:
-                imageFileName = "marriage";
-                if (isDark) {
-                    outcomeTitle = "Marriage (Reversed) — Bound in Golden Chains";
+                if (isDark) 
                     adviceText = "An inescapable covenant links " + this.name1 + " and " + this.name2 + ", but obligations threaten to overshadow organic affection. Friction arises as duty clashes with personal freedom.";
-                } else {
-                    outcomeTitle = "MARRIAGE — Sacred Covenant";
+                else 
                     adviceText = "A rare permanent soul-contract binds " + this.name1 + " and " + this.name2 + ". Your paths intertwine for enduring mutual growth, long-term stability, and unconditional devotion.";
-                }
                 break;
 
             case 5:
-                imageFileName = "enemies";
-                if (isDark) {
-                    outcomeTitle = "Enemies (Reversed) — Eternal Nemesis";
+                if (isDark) 
                     adviceText = "A dark friction dominates the energetic field between " + this.name1 + " and " + this.name2 + ". Ego clashes and deep psychological pride provoke recurring conflict that requires strict boundaries to break.";
-                } else {
-                    outcomeTitle = "ENEMIES — Fiery Friction";
-                    adviceText = "High kinetic tension exists between " + this.name1 + " and " + this.name2 + ". If directed constructively, this friction can spark transformative personal growth.";
-                }
+                else 
+                    adviceText = "High kinetic tension exists between " + this.name1 + " and " + this.name2 + ". If directed constructively, this friction can spark transformative personal growth."; 
                 break;
 
             case 6:
             default:
-                imageFileName = "soulmates";
-                if (isDark) {
-                    outcomeTitle = "Soulmates (Reversed) — The Broken Mirror";
+                if (isDark) 
                     adviceText = "A spiritual mirror links " + this.name1 + " and " + this.name2 + ", reflecting both light and deepest insecurities. Until inner shadows are acknowledged, this intense connection will feel like a fated burden.";
-                } else {
-                    outcomeTitle = "SOULMATES — Cosmic Synchronicity";
+                else 
                     adviceText = "An otherworldly cosmic synchronization binds " + this.name1 + " and " + this.name2 + ". Two halves of a single spiritual entity walking the path of destiny.";
-                }
                 break;
         }
-
-        return new FlamesResult(outcomeTitle, imageFileName, sum, adviceText, isDark);
+        
+        outcomeTitle = outcomeTitleArr[rem - 1];
+        imageFileName = imageFileNameArr[rem - 1];
+        
+        flamesResult = new FlamesResult(outcomeTitle, imageFileName, sum, adviceText, isDark);
+        return flamesResult;
     }
 
     public static void main(String[] args) {
@@ -1120,6 +1090,13 @@ public class App extends Application {
         st.setInterpolator(Interpolator.EASE_BOTH);
         st.play();
         return st;
+    }
+    
+    public void fadeNode(Node node){
+        FadeTransition ft = new FadeTransition(Duration.millis(1000), node);
+        ft.setFromValue(1.0); 
+        ft.setToValue(0.0);   
+        ft.play();
     }
     
 }
