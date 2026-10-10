@@ -5,7 +5,7 @@ Gunot, Vin Trixter B.
 Pajunar, Willie Chad K.
 
 Date Created: September 10, 2026
-Date Updated: September 22, 2026
+Date Updated: October 9, 2026
 Summary: Flames Tarot Game Strict Traditional FLAMES Algorithm & Dark Altar Reveal Mode
 */
 
@@ -47,7 +47,7 @@ public class App extends Application {
     private String name2 = "";
     private final Random random = new Random();
     private MediaPlayer bgMusic;
-    private MediaPlayer sfx;
+    private MediaPlayer sfx, sfx2;
     private MediaPlayer trixMedia;
     private FlamesResult result;
     private double rotHolder;
@@ -120,8 +120,8 @@ public class App extends Application {
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
         //tarotDeckScreen();
-        //introExpo();
-        askNamesScreen();
+        introExpo();
+        //askNamesScreen();
         //trixterReading();
         
         //Make the screen show up
@@ -189,7 +189,7 @@ public class App extends Application {
         scaleNode(dialogue, 1.5);
         
         //Animate Text
-        anim_txt = textScrollAnim (message[strIndex], dialogue, 25);
+        anim_txt = textScrollAnim (message[strIndex], dialogue, 25, true);
         anim_txt.setOnFinished( event -> {
             btnContinue.setVisible(true);
         });
@@ -205,7 +205,7 @@ public class App extends Application {
         //inag cllick
         btnContinue.setOnAction(click -> {
             if (++strIndex < message.length){
-                anim_txt = textScrollAnim (message[strIndex], dialogue, 25);
+                anim_txt = textScrollAnim (message[strIndex], dialogue, 25, true);
                 
                 //Dapat naa ni cya dri para mu trigger cya on every new message
                 anim_txt.setOnFinished( event -> {
@@ -245,7 +245,7 @@ public class App extends Application {
         primerText.getStyleClass().add("primer-text");
         
         //Make it animated ==============================================
-        anim_txt = textScrollAnim (primerStr, primerText, 25);
+        anim_txt = textScrollAnim (primerStr, primerText, 25, true);
         anim_txt.playFromStart();
         //===================================================================
 
@@ -296,42 +296,95 @@ public class App extends Application {
     }
 
     // ==========================================
-    // SCREEN 2: SOUL CONSENT
+    // SCREEN 3: SOUL CONSENT
     // ==========================================
     public void soulConsentScreen() {
         if (trixMedia != null) 
             trixMedia.stop(); // Trixter quiet if still talking
         
         StackPane root = createScreenWithBackground("3rdBG");
-
+        
+        ImageView imgTrix = new ImageView( this.trixI );
+        scaleNode(imgTrix, 1.5);
+        moveNode(imgTrix, 0, 100);
+        
         Label warningSigil = new Label("⚖");
         warningSigil.getStyleClass().add("sigil-red");
         applyPulseAnimation(warningSigil, 3200, 0.03);
+        moveNode(warningSigil, 0, -170);
 
         Label warningTitle = new Label("THE SACRED COVENANT");
         warningTitle.getStyleClass().add("dark-red-header");
+        moveNode(warningTitle, 0, -190);
         
-        String consentStr = """
-                            Before the cards are dealt, take pause:
-                            By entering this ritual, you anchor a temporary fragment
-                            of your psychological vibration into the deck.
-                            What is revealed can never be unlearned.
-                            """;
-        Label consentText = new Label(consentStr);
-        consentText.getStyleClass().add("consent-text");
+        strIndex = 0;
+        String message[] = { 
+            "Before the cards are dealt, take pause.",
+            "By entering this ritual, you anchor a temporary thread from the tapestry of your fate...", 
+            "...into this very deck.",
+            "What is revealed can never be unlearned.",
+            "Do you wish to proceed?"};
+        
+        Label consentText = new Label();
+        consentText.getStyleClass().add("primer-text");
+        
+        Button btnContinue = new Button("Continue");
+        moveNode(btnContinue, 0, 250);
+        btnContinue.setVisible(false);
 
         Button btnConsent = new Button("I CONSENT. BIND MY ESSENCE");
-        btnConsent.getStyleClass().add("dark-button");
+        btnConsent.getStyleClass().add("gold-button");
+        btnConsent.setVisible(false);
+        moveNode(btnConsent, 0, 180);
+        
+        Button btnNo = new Button("I DO NOT.");
+        btnNo.getStyleClass().add("dark-button");
+        btnNo.setVisible(false);
+        moveNode(btnNo, 0, 180);
 
-        VBox layoutContainer = new VBox(22, warningSigil, warningTitle, consentText, btnConsent);
+        VBox layoutContainer = new VBox(22, warningSigil, warningTitle, consentText, btnConsent, btnNo);
         layoutContainer.setAlignment(Pos.CENTER);
         layoutContainer.setMaxWidth(750);
 
-        root.getChildren().add(layoutContainer);
+        root.getChildren().addAll(imgTrix, layoutContainer, btnContinue);
         fadeIn(layoutContainer, 50);
         scene.setRoot(root);
+        
+        trixTalk(imgTrix, 100, 3, true);
+        
+        scaleNode(consentText, 1.25);
+        moveNode(consentText, 0, 180);
+        
+        anim_txt = textScrollAnim (message[strIndex], consentText, 25, true);
+        anim_txt.playFromStart();
+        anim_txt.setOnFinished( event -> {
+            btnContinue.setVisible(true);
+        });
+        //inag cllick
+        btnContinue.setOnAction(click -> {
+            if (++strIndex < message.length){
+                anim_txt = textScrollAnim (message[strIndex], consentText, 25, true);
+                
+                trixTalk(imgTrix, 100, (message[strIndex].length() / 15), true);
+                
+                anim_txt.playFromStart();
+                btnContinue.setVisible(false);
+                
+                anim_txt.setOnFinished( e -> {
+                    if (strIndex < message.length - 1)
+                    btnContinue.setVisible(true);
+                } );
+                
+                if (strIndex == message.length - 1){
+                    btnConsent.setVisible(true);
+                    btnNo.setVisible(true);
+                    btnContinue.setVisible(false);
+                }      
+            }
+        });
 
-        btnConsent.setOnAction(e -> playFastTransition(this::askNamesScreen));
+        btnConsent.setOnAction(e -> { playFastTransition(this::askNamesScreen); this.strIndex = 0;});
+        btnNo.setOnAction(e -> playFastTransition(this::mainMenu));
     }
 
     // ==========================================
@@ -389,7 +442,7 @@ public class App extends Application {
         Button btnSubmit = new Button("SUMMON ENERGY TO ALTAR");
         btnSubmit.getStyleClass().add("gold-button");
 
-        Label txtErr = new Label("");
+        Label txtErr = new Label();
         txtErr.getStyleClass().add("error-label");
 
         VBox layoutContainer = new VBox(16, title, lbl1, fldName1, lbl2, fldName2, btnSubmit, txtErr);
@@ -399,13 +452,25 @@ public class App extends Application {
         root.getChildren().add(layoutContainer);
         fadeIn(layoutContainer, 50);
         scene.setRoot(root);
+        
+        
 
         btnSubmit.setOnAction(click -> {
             String n1 = fldName1.getText().trim();
             String n2 = fldName2.getText().trim();
+            
+            if (trixMedia != null)
+                trixMedia.stop();
 
             if (n1.isEmpty() || n2.isEmpty()) {
-                txtErr.setText("Both names are required to anchor the ritual.");
+                anim_txt = textScrollAnim ("A match needs two names to work, dear.", txtErr, 20, true);
+                anim_txt.playFromStart();
+                return;
+            }
+            
+            if (hasDigit(n1) || hasDigit(n2)){
+                anim_txt = textScrollAnim ("Names cannot have numbers, I'm afraid.", txtErr, 20, true);
+                anim_txt.playFromStart();
                 return;
             }
 
@@ -415,6 +480,19 @@ public class App extends Application {
             playFastTransition(this::trixterReading);
             this.strIndex = 0;
         });
+    }
+    
+    //Checkers
+    public boolean isDigit(char ch){ 
+        return (ch <= 57 && ch >= 48);
+    }
+    
+    public boolean hasDigit(String str){
+        for (int i = 0; i < str.length(); i++){
+            if ( isDigit(str.charAt(i)) )
+                return true;
+        }
+        return false;
     }
 
     /*==========================================
@@ -443,7 +521,7 @@ public class App extends Application {
         moveNode(dialogue, 0, -250);
         
         //Animate Text
-        anim_txt = textScrollAnim (message[strIndex], dialogue, 25);
+        anim_txt = textScrollAnim (message[strIndex], dialogue, 25, true);
         anim_txt.setOnFinished( event -> btnContinue.setVisible(true) );
         anim_txt.playFromStart();
         
@@ -462,7 +540,7 @@ public class App extends Application {
         //inag cllick
         btnContinue.setOnAction(click -> {
             if (++strIndex < message.length){
-                anim_txt = textScrollAnim (message[strIndex], dialogue, 25);
+                anim_txt = textScrollAnim (message[strIndex], dialogue, 25, true);
                 
                 trixTalk(imgTrix, 100, 3, true);
                 
@@ -567,7 +645,6 @@ public class App extends Application {
         ImageView cardImgView = new ImageView();
         Image blankImg = loadResourceImage("cardBlank");
         
-
         if (blankImg != null) {
             cardImgView.setImage(blankImg);
             cardImgView.setFitHeight(195);
@@ -664,7 +741,7 @@ public class App extends Application {
         applyPulseAnimation(imgZodiac, 800, 0.06);
         
         sfx = playSfx(introMagicSfx, 1, 1);
-        sfx = playSfx(whisperSfx, 1, 1);
+        sfx2 = playSfx(whisperSfx, 1, 1);
         
         waitName1.play();
         scene.setRoot(root);
@@ -677,7 +754,9 @@ public class App extends Application {
             spin.setRate(1.5);
             spin2.setRate(4);
             
-            if (this.result.getIsDark()){
+            System.out.println(result.getIsDark());
+            
+            if (result.getIsDark()){
                 rotHolder = imgRays.getRotate();
                 imgTrix.setImage( this.trixBad );
                 imgRays.setImage( this.raysBad );
@@ -691,26 +770,25 @@ public class App extends Application {
         
         waitName1.setOnFinished(e -> {
             fadeNode(nameDisplay);
-            waitName1Finish.play();
+            waitName1Finish.playFromStart();
         });
         
         waitName1Finish.setOnFinished(e -> {
             nameDisplay.setText(this.name2);
             nameDisplay.setOpacity(1);
-            waitName2.play();
+            waitName2.playFromStart();
         });
         
         waitName2.setOnFinished(e -> fadeNode(nameDisplay) );
         waitResult.setOnFinished( e -> playFastTransition(this::revealFate) );
     }
     
-    
-    
-
     // ==========================================
     // SCREEN 7: THE FINAL SPREAD (THE READING)
     // ==========================================
     public void revealFate() {
+        String outcomeName = result.getOutcomeName();
+        
         this.bgMusic.setVolume(0.2);
         
         if (result.getIsDark() == true)
@@ -722,11 +800,12 @@ public class App extends Application {
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(20));
 
-        Label titleBanner = new Label(result.getOutcomeName());
+        Label titleBanner = new Label();
         titleBanner.getStyleClass().add(result.getIsDark() ? "dark-red-header-small" : "gold-header-small");
         applyPulseAnimation(titleBanner, 3200, 0.04);
+        anim_txt = textScrollAnim (outcomeName, titleBanner, 40, false);
+        anim_txt.playFromStart();
 
-        // Balanced side-by-side card container
         // Balanced side-by-side card container (tightened spacing)
         HBox altarGrid = new HBox(8); // Reduced from 24 to 8 to bring cards close together
         altarGrid.setAlignment(Pos.CENTER);
@@ -752,6 +831,7 @@ public class App extends Application {
 
         // Connective Illuminated Sigil
         Label lineConnect = new Label(result.getIsDark() ? "⚔" : "✦");
+        scaleNode(lineConnect, 6);
         lineConnect.setStyle("-fx-font-size: 22px; -fx-text-fill: " + (result.getIsDark() ? DARK_RED_COLOR : GOLD_COLOR) + ";");
         applyPulseAnimation(lineConnect, 3200, 0.04);
         altarGrid.getChildren().add(lineConnect);
@@ -807,7 +887,7 @@ public class App extends Application {
         fadeIn(content, 50);
         scene.setRoot(root);
 
-        btnRestart.setOnAction(click -> playFastTransition(this::mainMenu));
+        btnRestart.setOnAction(click -> {playFastTransition(this::mainMenu); strIndex = 0;});
     }
     
     public int getSimScore(String n1, String n2){
@@ -842,8 +922,6 @@ public class App extends Application {
         "Enemies (Reversed) — Eternal Nemesis",
         "Soulmates (Reversed) — The Broken Mirror"
     };
-    
-    
  
     private FlamesResult calculateFlames() {
         FlamesResult flamesResult;
@@ -859,6 +937,9 @@ public class App extends Application {
         String imageFileName;
         
         int rem = sum % "FLAMES".length();
+        
+        if (rem == 0) 
+            rem = 6;
 
         //Give advice text
         switch (rem) {
@@ -918,7 +999,7 @@ public class App extends Application {
     }
     
     //SUPPORT FUNCTIONS ================================
-    public Timeline textScrollAnim(String msg, Label label, int spd){
+    public Timeline textScrollAnim(String msg, Label label, int spd, boolean isTrix){
         Timeline tm = new Timeline();
         
         for (int i = 0; i < msg.length(); i++){
@@ -926,7 +1007,7 @@ public class App extends Application {
             
             KeyFrame keyFrame = new KeyFrame( Duration.millis(spd * i), event -> {
                 label.setText(msg.substring(0, index + 1));
-                if (index % 5 == 0){
+                if ((index % 5 == 0) && (isTrix)){
                     if (random.nextBoolean())
                         trixMedia = playSfx(trixTalk1, 1, 0.7);
                     else
@@ -960,7 +1041,7 @@ public class App extends Application {
         else
             tm.setCycleCount(cycles);
             
-        tm.play();
+        tm.playFromStart();
         return tm;
     }
     
@@ -998,7 +1079,7 @@ public class App extends Application {
     }
     
     /* ==========================================
-      MULTI-STRATEGY CLASSLOADER IMAGE LOADER
+     IMAGE LOADER
     ===========================================*/
     private Image loadResourceImage(String baseName) {
         String[] names = {baseName + ".png", baseName + ".PNG", baseName + ".jpg", baseName + ".JPG"};
@@ -1098,5 +1179,4 @@ public class App extends Application {
         ft.setToValue(0.0);   
         ft.play();
     }
-    
 }

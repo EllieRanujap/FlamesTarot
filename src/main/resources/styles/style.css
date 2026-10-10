@@ -146,7 +146,7 @@ Summary: Animated Astrological & Magical Theme for FlamesTarotGame (JavaFX Stand
     -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-background-color: #e63946;
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: #000000;
     -fx-background-radius: 20px;
     -fx-padding: 12px 28px;
     -fx-cursor: hand;
@@ -156,6 +156,7 @@ Summary: Animated Astrological & Magical Theme for FlamesTarotGame (JavaFX Stand
 .dark-button:hover {
     -fx-background-color: linear-gradient(to bottom, #ff4d5a, #e63946);
     -fx-effect: dropshadow(gaussian, rgba(230, 57, 70, 0.7), 16, 0.4, 0, 0);
+    -fx-text-fill: #ffffff;
 }
 
 /* Text Fields */
