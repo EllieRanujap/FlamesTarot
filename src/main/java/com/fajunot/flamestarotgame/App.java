@@ -120,8 +120,8 @@ public class App extends Application {
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
         //tarotDeckScreen();
-        introExpo();
-        //askNamesScreen();
+        //introExpo();
+        askNamesScreen();
         //trixterReading();
         
         //Make the screen show up
@@ -136,6 +136,12 @@ public class App extends Application {
     public void scaleNode(Node node, double size){
         node.setScaleX(size);
         node.setScaleY(size);
+    }
+    
+    public void scaleNode(Node node, double size, double opacity){
+        node.setScaleX(size);
+        node.setScaleY(size);
+        node.setOpacity(opacity);
     }
     
     public void moveNode(Node node, double xPos, double yPos){
@@ -227,7 +233,7 @@ public class App extends Application {
 
         Label title = new Label("✨ FLAMES TAROT ✨");
         title.getStyleClass().add("gold-header-large");
-        applyPulseAnimation(title, 3200);
+        applyPulseAnimation(title, 3200, 0.03);
         
         String primerStr =
             """
@@ -245,7 +251,7 @@ public class App extends Application {
 
         Button btnBegin = new Button("READ YOUR FATE");
         btnBegin.getStyleClass().add("gold-button");
-        ScaleTransition btnPulse = applyPulseAnimation(btnBegin, 1000);
+        ScaleTransition btnPulse = applyPulseAnimation(btnBegin, 1000, 0.05);
 
         //Button hover events
         btnBegin.setOnMouseEntered(enter -> {
@@ -277,13 +283,12 @@ public class App extends Application {
         
         //spin rays
         RotateTransition spin = spinNode(imgRays, 16, 360, -1);
-        
-        imgRays.setOpacity(0.2);
-        scaleNode(imgRays, 3.5);
+        scaleNode(imgRays, 3.5, 0.2);
         
         fadeIn(root, 50);
         scene.setRoot(root);
-
+        
+        //Next Screen
         btnBegin.setOnAction(click -> {
             playFastTransition(this::soulConsentScreen);
             anim_txt.stop();
@@ -301,7 +306,7 @@ public class App extends Application {
 
         Label warningSigil = new Label("⚖");
         warningSigil.getStyleClass().add("sigil-red");
-        applyPulseAnimation(warningSigil, 3200);
+        applyPulseAnimation(warningSigil, 3200, 0.03);
 
         Label warningTitle = new Label("THE SACRED COVENANT");
         warningTitle.getStyleClass().add("dark-red-header");
@@ -330,14 +335,9 @@ public class App extends Application {
     }
 
     // ==========================================
-    // SCREEN 3: NAME INPUT FORM (DYNAMIC PROMPTS)
+    // SCREEN 3: ASK FOR NAME
     // ==========================================
-    /*
-    For different prompt each time
-    Just 3 strings, the title and the two "label" like in HTML
-    */
     
-
     //Basically just plac
     private final List<PromptSet> promptPresets = List.of(
         new PromptSet(
@@ -397,7 +397,7 @@ public class App extends Application {
         layoutContainer.setPadding(new Insets(30));
 
         root.getChildren().add(layoutContainer);
-        //fadeIn(layoutContainer, 50);
+        fadeIn(layoutContainer, 50);
         scene.setRoot(root);
 
         btnSubmit.setOnAction(click -> {
@@ -654,51 +654,36 @@ public class App extends Application {
         //Name Text
         nameDisplay.setText(this.name1);
         nameDisplay.getStyleClass().add("primer-text");
-        nameDisplay.setTranslateY(-250);
-        nameDisplay.setScaleX(3);
-        nameDisplay.setScaleY(3);
-        
-        //imgZodiac
-        imgZodiac.setScaleX(1);
-        imgZodiac.setScaleY(1);
-        imgZodiac.setOpacity(0.2);
+        moveNode(nameDisplay, 0, -250);
+        scaleNode(nameDisplay, 3);
+        applyPulseAnimation(nameDisplay, 900, 0.4);
         
         //Trix modif
-        imgTrix.setScaleX(1.5);
-        imgTrix.setScaleY(1.5);
-        imgTrix.setTranslateY(100);
+        scaleNode(imgTrix, 1.5);
+        moveNode(imgTrix, 0, 100);
         
         tm = trixTalk(imgTrix, 250, 4, true);
         
-        //attach to the root
+        //ROOT
         root.getChildren().addAll(imgRays, imgZodiac, imgTrix, nameDisplay);
         
         //Spin rays
-        RotateTransition spin = new RotateTransition(Duration.seconds(16), imgRays);
-        spin.setByAngle(360);
-        spin.setCycleCount(Animation.INDEFINITE);
-        spin.setInterpolator(Interpolator.LINEAR);
-        spin.play();
-        imgRays.setOpacity(0.1);
-        imgRays.setScaleX(3.5);
-        imgRays.setScaleY(3.5);
+        RotateTransition spin = spinNode(imgRays, 16, 360, -1);
+        scaleNode(imgRays, 3.5, 0.1);
         
         //Spin Zodiac
-        RotateTransition spin2 = new RotateTransition(Duration.seconds(4), imgZodiac);
-        spin2.setByAngle(360);
-        spin2.setCycleCount(Animation.INDEFINITE);
-        spin2.setInterpolator(Interpolator.LINEAR);
-        spin2.play();
-        imgZodiac.setOpacity(0.1);
-        applyPulseAnimation(imgZodiac, 800);
+        RotateTransition spin2 = spinNode(imgZodiac, 4, 360, -1);
+        scaleNode(imgZodiac, 1, 0.1);
+        applyPulseAnimation(imgZodiac, 800, 0.06);
         
         sfx = playSfx(introMagicSfx, 1, 1);
         sfx = playSfx(whisperSfx, 1, 1);
         
         waitName1.play();
         
+        
         //anim wait end
-        tm.setOnFinished( e ->{
+        tm.setOnFinished( e -> {
             waitResult.play();
             
             this.result = calculateFlames();
@@ -711,8 +696,7 @@ public class App extends Application {
                 imgRays.setImage( this.raysBad );
                 imgRays.setRotate(rotHolder);
                 sfx = playSfx(badMagicSfx, 1, 1.5);
-            }
-            else{
+            } else {
                 sfx = playSfx(goodMagicSfx, 1, 1.5);
                 root.getChildren().add(1, new ImageView(lightBG));
             }
@@ -729,13 +713,9 @@ public class App extends Application {
             waitName2.play();
         });
         
-        waitName2.setOnFinished(e -> {
-            fadeNode(nameDisplay);
-        });
+        waitName2.setOnFinished(e -> fadeNode(nameDisplay) );
         
-        waitResult.setOnFinished(e -> {
-            playFastTransition(this::revealFate);
-        });
+        waitResult.setOnFinished( e -> playFastTransition(this::revealFate) );
         
         scene.setRoot(root);
     }
@@ -765,7 +745,7 @@ public class App extends Application {
 
         Label titleBanner = new Label(result.outcomeName);
         titleBanner.getStyleClass().add(result.isDark ? "dark-red-header-small" : "gold-header-small");
-        applyPulseAnimation(titleBanner, 3200);
+        applyPulseAnimation(titleBanner, 3200, 0.04);
 
         // Balanced side-by-side card container
         // Balanced side-by-side card container (tightened spacing)
@@ -794,7 +774,7 @@ public class App extends Application {
         // Connective Illuminated Sigil
         Label lineConnect = new Label(result.isDark ? "⚔" : "✦");
         lineConnect.setStyle("-fx-font-size: 22px; -fx-text-fill: " + (result.isDark ? DARK_RED_COLOR : GOLD_COLOR) + ";");
-        applyPulseAnimation(lineConnect, 3200);
+        applyPulseAnimation(lineConnect, 3200, 0.04);
         altarGrid.getChildren().add(lineConnect);
 
         // Card 2: Uses number.png background for the count display
@@ -1137,10 +1117,10 @@ public class App extends Application {
         ft.play();
     }
 
-    private ScaleTransition applyPulseAnimation(Node node, int ms) {
+    private ScaleTransition applyPulseAnimation(Node node, int ms, double diff) {
         ScaleTransition st = new ScaleTransition(Duration.millis(ms), node);
-        st.setByX(0.03);
-        st.setByY(0.03);
+        st.setByX(diff);
+        st.setByY(diff);
         st.setAutoReverse(true);
         st.setCycleCount(Animation.INDEFINITE);
         st.setInterpolator(Interpolator.EASE_BOTH);
