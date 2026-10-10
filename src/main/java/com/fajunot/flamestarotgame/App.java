@@ -11,8 +11,6 @@ Summary: Flames Tarot Game Strict Traditional FLAMES Algorithm & Dark Altar Reve
 
 package com.fajunot.flamestarotgame;
 
-import java.util.Random;
-
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -40,8 +38,6 @@ import javafx.util.Duration;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Random;
-
-
 
 public class App extends Application {
 
@@ -102,13 +98,13 @@ public class App extends Application {
     
     //effects
     private final Image rays = loadResourceImage("Rays");
-    private final Image raysBad = loadResourceImage("RaysBad");;
+    private final Image raysBad = loadResourceImage("RaysBad");
     private final Image zodiacCircle = loadResourceImage("theMagicCircle");
     
     //hand
-    private final Image hand = loadResourceImage("hand");;
+    private final Image hand = loadResourceImage("hand");
     
-    private final Image lightBG = loadResourceImage("LightBG");;
+    private final Image lightBG = loadResourceImage("LightBG");
 
     @Override
     public void start(Stage stage) {
@@ -124,118 +120,32 @@ public class App extends Application {
         scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm()); //access stylesheet
         
         //tarotDeckScreen();
-        //introExpo();
-        askNamesScreen();
+        introExpo();
+        //askNamesScreen();
         //trixterReading();
         
         //Make the screen show up
         stage.setScene(scene);
         stage.show();
     }
-
-    /* ==========================================
-      MULTI-STRATEGY CLASSLOADER IMAGE LOADER
-    ===========================================*/
-    private Image loadResourceImage(String baseName) {
-        String[] names = {baseName + ".png", baseName + ".PNG", baseName + ".jpg", baseName + ".JPG"};
-
-        for (String filename : names) {
-            String pathWithSlash = "/images/" + filename;
-            String pathNoSlash = "images/" + filename;
-
-            try (InputStream is = App.class.getResourceAsStream(pathWithSlash)) {
-                if (is != null) {
-                    Image img = new Image(is);
-                    if (!img.isError() && img.getWidth() > 0) return img;
-                }
-            } catch (Exception ignored) {}
-
-            try (InputStream is = App.class.getClassLoader().getResourceAsStream(pathNoSlash)) {
-                if (is != null) {
-                    Image img = new Image(is);
-                    if (!img.isError() && img.getWidth() > 0) return img;
-                }
-            } catch (Exception ignored) {}
-
-            try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(pathNoSlash)) {
-                if (is != null) {
-                    Image img = new Image(is);
-                    if (!img.isError() && img.getWidth() > 0) return img;
-                }
-            } catch (Exception ignored) {}
-        }
-
-        System.err.println("[RESOURCE WARNING] Missing image file for base: " + baseName);
-        return null;
-    }
-
-    private StackPane createScreenWithBackground(String bgFileName) {
-        StackPane root = new StackPane();
-        Image bgImage = loadResourceImage(bgFileName);
-
-        if (bgImage != null) {
-            ImageView bgView = new ImageView(bgImage);
-            bgView.setFitWidth(1280);
-            bgView.setFitHeight(720);
-            bgView.setPreserveRatio(false);
-            root.getChildren().add(bgView);
-        } else {
-            root.setStyle("-fx-background-color: #100720;");
-        }
-        return root;
-    }
-
-    private void playFastTransition(Runnable loadNextScreen) {
-        Node currentRoot = scene.getRoot();
-        if (currentRoot == null) {
-            loadNextScreen.run();
-            return;
-        }
-
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(150), currentRoot);
-        fadeOut.setFromValue(1.0);
-        fadeOut.setToValue(0.0);
-        fadeOut.setOnFinished(e -> {
-            loadNextScreen.run();
-            Node newRoot = scene.getRoot();
-            if (newRoot != null) {
-                newRoot.setOpacity(0.0);
-                FadeTransition fadeIn = new FadeTransition(Duration.millis(150), newRoot);
-                fadeIn.setFromValue(0.0);
-                fadeIn.setToValue(1.0);
-                fadeIn.play();
-            }
-        });
-        fadeOut.play();
-    }
-
-    private void fadeIn(Node node, int delayMs) {
-        node.setOpacity(0);
-        FadeTransition ft = new FadeTransition(Duration.millis(350), node);
-        ft.setToValue(1.0);
-        ft.setDelay(Duration.millis(delayMs));
-        ft.play();
-    }
-
-    private ScaleTransition applyPulseAnimation(Node node, int ms) {
-        ScaleTransition st = new ScaleTransition(Duration.millis(ms), node);
-        st.setByX(0.03);
-        st.setByY(0.03);
-        st.setAutoReverse(true);
-        st.setCycleCount(Animation.INDEFINITE);
-        st.setInterpolator(Interpolator.EASE_BOTH);
-        st.play();
-        return st;
-    }
     
     //HEre para dli layo
     private int strIndex = 0;
     private Timeline anim_txt;
     
+    public void scaleSize(Node node, double size){
+        node.setScaleX(size);
+        node.setScaleY(size);
+    }
+    
+    public void moveNode(Node node, double xPos, double yPos){
+        node.setTranslateX(xPos);
+        node.setTranslateY(yPos);
+    }
+    
     //exposition
     public void introExpo(){
         //Initialization
-        
         StackPane root = new StackPane();
         root.getStyleClass().add("blackBg");
         Label dialogue = new Label();
@@ -253,8 +163,7 @@ public class App extends Application {
         
         //Style
         dialogue.getStyleClass().add("primer-text");
-        dialogue.setScaleX(1.5);
-        dialogue.setScaleY(1.5);
+        scaleSize(dialogue, 1.5);
         
         //Animate Text
         anim_txt = textScrollAnim (message[strIndex], dialogue, 25);
@@ -267,7 +176,7 @@ public class App extends Application {
         root.getChildren().add(dialogue);
         root.getChildren().add(btnContinue);
         
-        btnContinue.setTranslateY(100);
+        moveNode(btnContinue, 0, 100);
         
         //Set Scene
         scene.setRoot(root);
@@ -1139,6 +1048,101 @@ public class App extends Application {
         newMusic.setVolume(volume);
         newMusic.play();
         return newMusic;
+    }
+    
+    /* ==========================================
+      MULTI-STRATEGY CLASSLOADER IMAGE LOADER
+    ===========================================*/
+    private Image loadResourceImage(String baseName) {
+        String[] names = {baseName + ".png", baseName + ".PNG", baseName + ".jpg", baseName + ".JPG"};
+
+        for (String filename : names) {
+            String pathWithSlash = "/images/" + filename;
+            String pathNoSlash = "images/" + filename;
+
+            try (InputStream is = App.class.getResourceAsStream(pathWithSlash)) {
+                if (is != null) {
+                    Image img = new Image(is);
+                    if (!img.isError() && img.getWidth() > 0) return img;
+                }
+            } catch (Exception ignored) {}
+
+            try (InputStream is = App.class.getClassLoader().getResourceAsStream(pathNoSlash)) {
+                if (is != null) {
+                    Image img = new Image(is);
+                    if (!img.isError() && img.getWidth() > 0) return img;
+                }
+            } catch (Exception ignored) {}
+
+            try (InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(pathNoSlash)) {
+                if (is != null) {
+                    Image img = new Image(is);
+                    if (!img.isError() && img.getWidth() > 0) return img;
+                }
+            } catch (Exception ignored) {}
+        }
+
+        System.err.println("[RESOURCE WARNING] Missing image file for base: " + baseName);
+        return null;
+    }
+
+    private StackPane createScreenWithBackground(String bgFileName) {
+        StackPane root = new StackPane();
+        Image bgImage = loadResourceImage(bgFileName);
+
+        if (bgImage != null) {
+            ImageView bgView = new ImageView(bgImage);
+            bgView.setFitWidth(1280);
+            bgView.setFitHeight(720);
+            bgView.setPreserveRatio(false);
+            root.getChildren().add(bgView);
+        } else {
+            root.setStyle("-fx-background-color: #100720;");
+        }
+        return root;
+    }
+
+    private void playFastTransition(Runnable loadNextScreen) {
+        Node currentRoot = scene.getRoot();
+        if (currentRoot == null) {
+            loadNextScreen.run();
+            return;
+        }
+
+        FadeTransition fadeOut = new FadeTransition(Duration.millis(150), currentRoot);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(e -> {
+            loadNextScreen.run();
+            Node newRoot = scene.getRoot();
+            if (newRoot != null) {
+                newRoot.setOpacity(0.0);
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(150), newRoot);
+                fadeIn.setFromValue(0.0);
+                fadeIn.setToValue(1.0);
+                fadeIn.play();
+            }
+        });
+        fadeOut.play();
+    }
+
+    private void fadeIn(Node node, int delayMs) {
+        node.setOpacity(0);
+        FadeTransition ft = new FadeTransition(Duration.millis(350), node);
+        ft.setToValue(1.0);
+        ft.setDelay(Duration.millis(delayMs));
+        ft.play();
+    }
+
+    private ScaleTransition applyPulseAnimation(Node node, int ms) {
+        ScaleTransition st = new ScaleTransition(Duration.millis(ms), node);
+        st.setByX(0.03);
+        st.setByY(0.03);
+        st.setAutoReverse(true);
+        st.setCycleCount(Animation.INDEFINITE);
+        st.setInterpolator(Interpolator.EASE_BOTH);
+        st.play();
+        return st;
     }
     
 }
