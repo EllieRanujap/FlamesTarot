@@ -133,7 +133,7 @@ public class App extends Application {
     private int strIndex = 0;
     private Timeline anim_txt;
     
-    public void scaleSize(Node node, double size){
+    public void scaleNode(Node node, double size){
         node.setScaleX(size);
         node.setScaleY(size);
     }
@@ -143,7 +143,24 @@ public class App extends Application {
         node.setTranslateY(yPos);
     }
     
-    //exposition
+    public RotateTransition spinNode(Node node, double seconds, double rotation, int cycles){
+        RotateTransition spin = new RotateTransition(Duration.seconds(seconds), node);
+        spin.setByAngle(rotation);
+        
+        if (cycles < 0)
+            spin.setCycleCount(Animation.INDEFINITE);
+        else
+            spin.setCycleCount(cycles);
+        
+        spin.setInterpolator(Interpolator.LINEAR);
+        spin.play();
+        
+        return spin;
+    }
+    
+    // ==========================================
+    // SCREEN 1: EXPOSITION
+    // ==========================================
     public void introExpo(){
         //Initialization
         StackPane root = new StackPane();
@@ -163,7 +180,7 @@ public class App extends Application {
         
         //Style
         dialogue.getStyleClass().add("primer-text");
-        scaleSize(dialogue, 1.5);
+        scaleNode(dialogue, 1.5);
         
         //Animate Text
         anim_txt = textScrollAnim (message[strIndex], dialogue, 25);
@@ -173,9 +190,7 @@ public class App extends Application {
         anim_txt.playFromStart();
         
         //Tie everything to root
-        root.getChildren().add(dialogue);
-        root.getChildren().add(btnContinue);
-        
+        root.getChildren().addAll(dialogue, btnContinue);
         moveNode(btnContinue, 0, 100);
         
         //Set Scene
@@ -201,7 +216,7 @@ public class App extends Application {
     }
 
     // ==========================================
-    // SCREEN 1: MAIN MENU
+    // SCREEN 2: MAIN MENU
     // ==========================================
     public void mainMenu() {
         StackPane root = createScreenWithBackground("1stBG");
@@ -239,8 +254,7 @@ public class App extends Application {
         });
         btnBegin.setOnMouseExited(exit -> {
             btnPulse.stop();
-            btnBegin.setScaleX(1.0); // Back to normal
-            btnBegin.setScaleY(1.0);
+            scaleNode(btnBegin, 1.0);
             imgTrix.setImage(trixI);
         });
         
@@ -249,34 +263,23 @@ public class App extends Application {
         primerText.setMaxWidth(800);
         
         //Adjust
-        title.setTranslateY(-250);
-        btnBegin.setTranslateY(175);
-        primerText.setTranslateY(250);
+        moveNode(title, 0, -250);
+        moveNode(btnBegin, 0, 175);
+        moveNode(primerText, 0, 250);
         
-        //Multiplier ni cya
-        imgTrix.setScaleX(1.5);
-        imgTrix.setScaleY(1.5);
-        imgTrix.setTranslateY(100);
+        scaleNode(imgTrix, 1.5);
+        moveNode(imgTrix, 0, 100);
         
         //Trix Talking
         trixTalk(imgTrix, 100, 10, false);
         
-        root.getChildren().add(imgRays);
-        root.getChildren().add(imgTrix);
-        root.getChildren().add(primerText);
-        root.getChildren().add(title);
-        root.getChildren().add(btnBegin);
+        root.getChildren().addAll(imgRays, imgTrix, primerText, title, btnBegin);
         
         //spin rays
-        RotateTransition spin = new RotateTransition(Duration.seconds(16), imgRays);
-
-        spin.setByAngle(360);
-        spin.setCycleCount(Animation.INDEFINITE);
-        spin.setInterpolator(Interpolator.LINEAR);
-        spin.play();
+        RotateTransition spin = spinNode(imgRays, 16, 360, -1);
+        
         imgRays.setOpacity(0.2);
-        imgRays.setScaleX(3.5);
-        imgRays.setScaleY(3.5);
+        scaleNode(imgRays, 3.5);
         
         fadeIn(root, 50);
         scene.setRoot(root);
